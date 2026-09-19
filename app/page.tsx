@@ -20,95 +20,8 @@ export default function Home() {
     <>
       <Hero />
 
-      {/* ===================== STATS ===================== */}
-      <section className="shell py-16 md:py-24">
-        <StatGrid />
-      </section>
-
-      {/* ===================== WHO WE ARE ===================== */}
-      <section className="border-y border-sand-200 bg-sand-50 py-16 md:py-28">
-        <div className="shell grid items-stretch gap-12 lg:grid-cols-2 lg:gap-20">
-          {/* Square video tile with an overlapping stat badge. The badge anchors
-              to this inner wrapper, not to the grid cell — otherwise it floats
-              to the bottom of the whole column. Square while stacked; on wide
-              screens it stretches to the text column's height so the row does
-              not end with a tall empty gap under the video.
-              This tile keeps the footage at full strength — it is a picture,
-              not a text bed, so it needs no wash. */}
-          <Reveal className="lg:h-full">
-            <div className="relative lg:h-full">
-              <div className="relative aspect-square overflow-hidden border border-sand-200 bg-sand-100 lg:aspect-auto lg:h-full lg:min-h-[34rem]">
-                <VideoBackdrop src={media.mortar.src} poster={media.mortar.poster} />
-              </div>
-              {/* square badge, deliberately breaking the tile's edge */}
-              <div className="absolute -bottom-6 -right-2 grid h-32 w-32 place-items-center bg-gold-500 p-4 text-center md:-right-6 md:h-40 md:w-40">
-                <div>
-                  <p className="font-display text-4xl font-semibold leading-none text-forest-990">
-                    8
-                  </p>
-                  <p className="mt-2 text-caption font-bold uppercase leading-tight tracking-[0.12em] text-forest-900">
-                    Therapeutic
-                    <br />
-                    areas
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-
-          <div className="lg:pt-6">
-            <Reveal>
-              <Eyebrow>Who we are</Eyebrow>
-            </Reveal>
-            <Reveal delay={80}>
-              <h2 className="mt-5 text-4xl">A manufacturer, not a repackager.</h2>
-            </Reveal>
-            <Reveal delay={150} className="mt-6 space-y-5 text-sand-600">
-              <p>
-                Genomed was built around a straightforward idea: herbal medicine deserves
-                the same manufacturing discipline that conventional pharmaceuticals take for
-                granted. Written master formulas. Tested raw material. Recorded deviations.
-                A batch number on every pack that leads back to the records behind it.
-              </p>
-              <p>
-                We formulate and produce from our own premises in Bulandshahr, Uttar Pradesh,
-                and supply stockists, distributors and clinics who need a dependable source
-                rather than an intermittent one.
-              </p>
-            </Reveal>
-
-            <ul className="mt-10 border-t border-sand-200">
-              {pillars.map((p, i) => (
-                <Reveal
-                  as="li"
-                  key={p.title}
-                  delay={i * 80}
-                  className="grid grid-cols-[auto_1fr] gap-5 border-b border-sand-200 py-5"
-                >
-                  <span className="font-display text-lg font-semibold text-gold-700">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                  <div>
-                    <h3 className="text-xl">{p.title}</h3>
-                    <p className="mt-1.5 text-sm leading-relaxed text-sand-600">{p.body}</p>
-                  </div>
-                </Reveal>
-              ))}
-            </ul>
-
-            <Reveal delay={200}>
-              <Link
-                href="/about"
-                className="group mt-8 inline-flex items-center gap-2 py-1 pointer-coarse:min-h-11 pointer-coarse:py-3 text-sm font-bold text-forest-700"
-              >
-                More about Genomed
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </Link>
-            </Reveal>
-          </div>
-        </div>
-      </section>
-
+      {/* Shop first: after the hero a visitor meets the categories and the
+          products, then the company story and the credentials behind them. */}
       {/* ===================== THERAPEUTIC AREAS ===================== */}
       <section className="py-16 md:py-28">
         <div className="shell">
@@ -197,6 +110,95 @@ export default function Home() {
                 <ProductCard product={p} />
               </Reveal>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===================== STATS ===================== */}
+      <section className="shell py-16 md:py-24">
+        <StatGrid />
+      </section>
+
+      {/* ===================== WHO WE ARE ===================== */}
+      <section className="border-y border-sand-200 bg-sand-50 py-16 md:py-28">
+        <div className="shell grid items-stretch gap-12 lg:grid-cols-2 lg:gap-20">
+          {/* Square video tile with an overlapping stat badge. The badge anchors
+              to this inner wrapper, not to the grid cell — otherwise it floats
+              to the bottom of the whole column. Square while stacked; on wide
+              screens it stretches to the text column's height so the row does
+              not end with a tall empty gap under the video.
+              This tile keeps the footage at full strength — it is a picture,
+              not a text bed, so it needs no wash. */}
+          <Reveal className="lg:h-full">
+            <div className="relative lg:h-full">
+              <div className="relative aspect-square overflow-hidden border border-sand-200 bg-sand-100 lg:aspect-auto lg:h-full lg:min-h-[34rem]">
+                <VideoBackdrop src={media.mortar.src} poster={media.mortar.poster} />
+              </div>
+              {/* square badge, deliberately breaking the tile's edge */}
+              <div className="absolute -bottom-6 -right-2 grid h-32 w-32 place-items-center bg-gold-500 p-4 text-center md:-right-6 md:h-40 md:w-40">
+                <div>
+                  <p className="font-display text-4xl font-semibold leading-none text-forest-990">
+                    8
+                  </p>
+                  <p className="mt-2 text-caption font-bold uppercase leading-tight tracking-[0.12em] text-forest-900">
+                    Therapeutic
+                    <br />
+                    areas
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+
+          <div className="lg:pt-6">
+            <Reveal>
+              <Eyebrow>Who we are</Eyebrow>
+            </Reveal>
+            <Reveal delay={80}>
+              <h2 className="mt-5 text-4xl">A manufacturer, not a repackager.</h2>
+            </Reveal>
+            <Reveal delay={150} className="mt-6 space-y-5 text-sand-600">
+              <p>
+                Genomed was built around a straightforward idea: herbal medicine deserves
+                the same manufacturing discipline that conventional pharmaceuticals take for
+                granted. Written master formulas. Tested raw material. Recorded deviations.
+                A batch number on every pack that leads back to the records behind it.
+              </p>
+              <p>
+                We formulate and produce from our own premises in Bulandshahr, Uttar Pradesh,
+                and supply stockists, distributors and clinics who need a dependable source
+                rather than an intermittent one.
+              </p>
+            </Reveal>
+
+            <ul className="mt-10 border-t border-sand-200">
+              {pillars.map((p, i) => (
+                <Reveal
+                  as="li"
+                  key={p.title}
+                  delay={i * 80}
+                  className="grid grid-cols-[auto_1fr] gap-5 border-b border-sand-200 py-5"
+                >
+                  <span className="font-display text-lg font-semibold text-gold-700">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
+                  <div>
+                    <h3 className="text-xl">{p.title}</h3>
+                    <p className="mt-1.5 text-sm leading-relaxed text-sand-600">{p.body}</p>
+                  </div>
+                </Reveal>
+              ))}
+            </ul>
+
+            <Reveal delay={200}>
+              <Link
+                href="/about"
+                className="group mt-8 inline-flex items-center gap-2 py-1 pointer-coarse:min-h-11 pointer-coarse:py-3 text-sm font-bold text-forest-700"
+              >
+                More about Genomed
+                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Link>
+            </Reveal>
           </div>
         </div>
       </section>

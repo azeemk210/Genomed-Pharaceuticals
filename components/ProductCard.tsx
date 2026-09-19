@@ -45,13 +45,23 @@ export default function ProductCard({ product }: { product: Product }) {
           />
         </div>
 
-        {product.badge && (
-          <span
-            className={`absolute top-2.5 left-2.5 px-2 py-1 text-[0.75rem] font-bold tracking-wider ${
-              product.badge === "HOT" ? "bg-gold-500 text-forest-990" : "bg-forest-900 text-white"
-            }`}
-          >
-            {product.badge}
+        {/* Flags stack top-left: the saving first, then any merchandising badge. */}
+        {(off > 0 || product.badge) && (
+          <span className="absolute top-2.5 left-2.5 flex flex-col items-start gap-1">
+            {off > 0 && (
+              <span className="tnum bg-gold-500 px-2 py-1 text-[0.75rem] font-bold tracking-wider text-forest-990">
+                {off}% off
+              </span>
+            )}
+            {product.badge && (
+              <span
+                className={`px-2 py-1 text-[0.75rem] font-bold tracking-wider ${
+                  product.badge === "HOT" ? "bg-gold-500 text-forest-990" : "bg-forest-900 text-white"
+                }`}
+              >
+                {product.badge}
+              </span>
+            )}
           </span>
         )}
 
@@ -81,31 +91,27 @@ export default function ProductCard({ product }: { product: Product }) {
           {product.descriptor}
         </p>
 
-        <ul aria-label="Pack details" className="mt-2.5 mb-3 flex flex-wrap gap-1.5 sm:mt-3 sm:mb-4">
-          {[product.form, product.pack].map((v) => (
-            <li
-              key={v}
-              className="border border-sand-200 bg-sand-50 px-2 py-0.5 text-[0.75rem] font-medium text-sand-700 sm:text-caption"
-            >
-              {v}
-            </li>
-          ))}
-        </ul>
+        <p className="mt-2 mb-3 truncate text-caption font-medium text-sand-700 sm:mb-4">
+          {product.form} · {product.pack}
+        </p>
 
-        <div className="mt-auto flex flex-col gap-2.5 border-t border-sand-100 pt-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:pt-4">
-          <p className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        {/* Price and control share one row from sm. Both the Add button and the
+            stepper are the same fixed box, so swapping one for the other moves
+            nothing; the price never shrinks, so it can never be clipped. */}
+        <div className="mt-auto flex flex-col gap-2 border-t border-sand-100 pt-3 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
+          {/* One column: list price above, selling price below. The top line is
+              always laid out, so a card without a discount keeps the same
+              height and its button lands in the same place as every other. */}
+          <p className="flex shrink-0 flex-col whitespace-nowrap">
+            <span className="tnum min-h-4 text-xs leading-4 text-sand-600">
+              {off > 0 && product.listPrice ? <s>{price(product.listPrice)}</s> : null}
+            </span>
             <span className="sr-only">MRP</span>
-            <span className="tnum font-display text-xl font-semibold text-forest-900 sm:text-2xl">
+            <span className="tnum font-display text-lg leading-tight font-semibold text-forest-900 sm:text-xl">
               {price(product.mrp)}
             </span>
-            {off > 0 && product.listPrice && (
-              <>
-                <s className="tnum text-xs text-sand-600 sm:text-sm">{price(product.listPrice)}</s>
-                <span className="tnum text-xs font-bold text-gold-700">−{off}%</span>
-              </>
-            )}
           </p>
-          <AddToCartButton product={product} className="relative z-10 w-full sm:w-auto" />
+          <AddToCartButton product={product} className="relative z-10 w-full sm:w-28 sm:shrink-0 pointer-coarse:sm:w-34" />
         </div>
       </div>
     </article>

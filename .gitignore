@@ -42,3 +42,5 @@ next-env.d.ts
 
 # test artifacts
 .test-shots/
+
+.sweep-shots

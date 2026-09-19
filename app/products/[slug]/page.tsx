@@ -16,6 +16,7 @@ import PackShot from "@/components/PackShot";
 import ProductCard from "@/components/ProductCard";
 import EnquiryForm from "@/components/EnquiryForm";
 import { AddToCartPanel } from "@/components/AddToCart";
+import StickyBuyBar from "@/components/StickyBuyBar";
 import { price } from "@/lib/format";
 import TherapyIcon from "@/components/TherapyIcon";
 import Reveal from "@/components/Reveal";
@@ -235,7 +236,8 @@ export default async function ProductPage({
                 <p className="mt-1.5 text-caption text-sand-600">MRP, inclusive of all taxes</p>
               </div>
 
-              <div className="mt-6">
+              {/* Watched by StickyBuyBar: once this scrolls off, the phone bar appears. */}
+              <div id="buy-box" className="mt-6">
                 <AddToCartPanel product={product} />
               </div>
               <a
@@ -423,6 +425,8 @@ export default async function ProductPage({
           </Reveal>
         </div>
       </section>
+
+      <StickyBuyBar product={product} watchId="buy-box" />
     </>
   );
 }

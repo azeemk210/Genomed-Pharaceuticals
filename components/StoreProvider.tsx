@@ -106,6 +106,10 @@ export const removeFromCart = (slug: string) =>
 
 export const clearCart = () => commit({ cart: [] });
 
+/** Puts back a list captured before a removal — what "Undo" calls. */
+export const restoreCart = (lines: CartLine[]) =>
+  commit({ cart: lines.filter((l) => l.qty > 0 && getProduct(l.slug)) });
+
 export function toggleSavedItem(slug: string) {
   if (!getProduct(slug)) return;
   const saved = snapshot.saved.includes(slug)
@@ -147,6 +151,7 @@ export function useStore() {
       setQty: setCartQty,
       remove: removeFromCart,
       clear: clearCart,
+      restore: restoreCart,
       toggleSaved: toggleSavedItem,
     };
   }, [ready, cart, saved]);

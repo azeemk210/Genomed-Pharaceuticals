@@ -66,6 +66,8 @@ for (const route of ROUTES) {
   page.on("requestfailed", (r) => {
     const u = r.url();
     if (IGNORE.some((re) => re.test(u))) return;
+    // Production build: a <Link> prefetch cancelled as the test moves on.
+    if (u.includes("_rsc=") && r.failure()?.errorText === "net::ERR_ABORTED") return;
     seen.push(["request", `${u} — ${r.failure()?.errorText}`]);
   });
 
@@ -197,13 +199,13 @@ const lines = await page.locator("main ul li").count();
 if (lines === 0) note("/cart", "cart", "line did not persist to the cart page");
 await page.locator('button[aria-label^="Increase quantity"]').first().click();
 await page.waitForTimeout(350);
-const qty = await page.locator('input[type="number"]').first().inputValue();
+const qty = await page.locator('input[inputmode="numeric"]').first().inputValue();
 if (qty !== "2") note("/cart", "cart", `quantity showed ${qty} after increment, expected 2`);
 
 // survives a reload (localStorage)
 await page.reload({ waitUntil: "networkidle" });
 await page.waitForTimeout(500);
-const qtyAfterReload = await page.locator('input[type="number"]').first().inputValue().catch(() => "0");
+const qtyAfterReload = await page.locator('input[inputmode="numeric"]').first().inputValue().catch(() => "0");
 if (qtyAfterReload !== "2") note("/cart", "cart", `quantity ${qtyAfterReload} after reload, expected 2`);
 console.log(`  cart: add -> badge ${badgeAfterAdd.trim()}, +1 -> ${qty}, reload -> ${qtyAfterReload}`);
 
@@ -234,6 +236,116 @@ const drawerOpen = await toggle.isVisible();
 if (!drawerOpen) note("/", "mobilenav", "drawer did not open");
 console.log(`  mobile drawer opens: ${drawerOpen}`);
 await page.screenshot({ path: `${SHOTS}/home--drawer.png` });
+
+
+// 8. cart: every removal can be undone, and focus never falls to <body>
+await page.setViewportSize({ width: 1440, height: 960 });
+await page.goto(`${BASE}/products`, { waitUntil: "networkidle" });
+for (let i = 0; i < 2; i++) await page.locator('article button[aria-label^="Add "]').first().click();
+await page.goto(`${BASE}/cart`, { waitUntil: "networkidle" });
+const rowsBefore = await page.locator("[data-row]").count();
+await page.locator('[data-row] button[aria-label^="Remove "]').last().click();
+await page.waitForTimeout(400);
+const rowsAfter = await page.locator("[data-row]").count();
+const focusAfterRemove = await page.evaluate(() => document.activeElement?.tagName);
+await page.getByRole("button", { name: "Undo" }).click();
+await page.waitForTimeout(400);
+const rowsUndone = await page.locator("[data-row]").count();
+if (rowsAfter !== rowsBefore - 1) note("/cart", "undo", `remove: ${rowsBefore} → ${rowsAfter} rows`);
+if (rowsUndone !== rowsBefore) note("/cart", "undo", `undo restored ${rowsUndone} of ${rowsBefore} rows`);
+if (focusAfterRemove === "BODY") note("/cart", "focus", "focus dropped to <body> after removing a row");
+await page.getByRole("button", { name: "Clear the list" }).click();
+await page.waitForTimeout(400);
+const emptied = await page.getByText("Your enquiry list is empty").isVisible();
+const focusAfterClear = await page.evaluate(() => document.activeElement?.tagName);
+await page.getByRole("button", { name: "Undo" }).click();
+await page.waitForTimeout(400);
+const rowsReturned = await page.locator("[data-row]").count();
+if (!emptied) note("/cart", "undo", "clear did not reach the empty state");
+if (focusAfterClear === "BODY") note("/cart", "focus", "focus dropped to <body> after clearing");
+if (rowsReturned !== rowsBefore) note("/cart", "undo", `undo after clear restored ${rowsReturned} of ${rowsBefore}`);
+console.log(`  cart undo: ${rowsBefore} → ${rowsAfter} → ${rowsUndone}; clear → undo → ${rowsReturned}; focus ${focusAfterRemove}/${focusAfterClear}`);
+
+// send enquiry brings the form into view and takes focus
+await page.getByRole("button", { name: "Send this enquiry" }).click();
+await page.waitForTimeout(900);
+const send = await page.evaluate(() => ({
+  inView: document.getElementById("send").getBoundingClientRect().top < innerHeight,
+  focus: document.activeElement?.id,
+}));
+if (!send.inView || send.focus !== "send") note("/cart", "form", `enquiry form inView=${send.inView} focus=${send.focus}`);
+console.log(`  cart: enquiry form in view ${send.inView}, focused ${send.focus === "send"}`);
+
+// 9. a category link back to the URL the listing mounted with re-seeds it
+await page.goto(`${BASE}/products?area=liver-care`, { waitUntil: "networkidle" });
+await page.locator('aside[aria-label="Filters"] button:has-text("Renal Care")').click();
+await page.locator('footer a[href="/products?area=liver-care"]').first().click();
+await page.waitForTimeout(1200);
+const reseeded = (await page.textContent("h1"))?.trim();
+if (reseeded !== "Liver Care") note("/products", "reseed", `h1 is "${reseeded}" after following a Liver Care link`);
+console.log(`  listing re-seed: h1 "${reseeded}"`);
+
+// 10. phone filter sheet: traps focus, filters live, Esc returns focus
+const phone = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+const mp = await phone.newPage();
+mp.on("pageerror", (e) => note("interaction", "exception", e.message));
+await mp.goto(`${BASE}/products`, { waitUntil: "networkidle" });
+await mp.getByRole("button", { name: /^Filters/ }).click();
+await mp.waitForTimeout(400);
+let escaped = false;
+for (let i = 0; i < 40 && !escaped; i++) {
+  await mp.keyboard.press("Tab");
+  escaped = await mp.evaluate(() => !document.activeElement.closest("[role=dialog]"));
+}
+if (escaped) note("/products", "sheet", "Tab left the open filter sheet");
+await mp.locator('[role=dialog] button:has-text("Liver Care")').click();
+const showLabel = (await mp.locator('[role=dialog] button:has-text("Show ")').textContent())?.trim();
+await mp.keyboard.press("Escape");
+await mp.waitForTimeout(300);
+const sheetGone = (await mp.locator("[role=dialog]").count()) === 0;
+const backOnTrigger = await mp.evaluate(() => /Filters/.test(document.activeElement?.textContent || ""));
+const phoneCards = await mp.locator("[data-area]").count();
+if (!sheetGone) note("/products", "sheet", "Esc did not close the sheet");
+if (!backOnTrigger) note("/products", "sheet", "focus did not return to the Filters button");
+if (!showLabel?.includes(String(phoneCards))) note("/products", "sheet", `"${showLabel}" but ${phoneCards} cards shown`);
+console.log(`  filter sheet: trapped ${!escaped}, "${showLabel}", Esc closes ${sheetGone}, focus back ${backOnTrigger}`);
+
+// a chip selected by the URL is scrolled into the strip
+await mp.goto(`${BASE}/products?area=general-wellness`, { waitUntil: "networkidle" });
+await mp.waitForTimeout(400);
+const chipSeen = await mp.evaluate(() => {
+  const chip = document.querySelector('[aria-label="Therapeutic area"] [aria-pressed="true"]');
+  const r = chip?.getBoundingClientRect();
+  return !!r && r.left >= 0 && r.right <= innerWidth;
+});
+if (!chipSeen) note("/products?area=", "chips", "selected chip is off screen");
+console.log(`  chips: selected chip in view ${chipSeen}`);
+
+// 11. sticky buy bar: inert at the top, live past the buy box, gone at the footer
+await mp.goto(`${BASE}/products/qsb-capsules`, { waitUntil: "networkidle" });
+const barState = () =>
+  mp.evaluate(() => {
+    const el = [...document.querySelectorAll("div.fixed")].find((d) => d.className.includes("bottom-0") && d.className.includes("z-30"));
+    return el ? { inert: el.inert, onScreen: el.getBoundingClientRect().top < innerHeight - 4 } : null;
+  });
+const atTop = await barState();
+await mp.evaluate(() => scrollTo(0, document.getElementById("buy-box").offsetTop + 900));
+await mp.waitForTimeout(700);
+const past = await barState();
+if (past && !past.inert) {
+  await mp.locator("div.fixed.z-30 button[aria-label^='Add ']").click();
+  await mp.waitForTimeout(400);
+}
+const barQty = await mp.locator("div.fixed.z-30 input").inputValue().catch(() => "");
+await mp.evaluate(() => scrollTo(0, document.body.scrollHeight));
+await mp.waitForTimeout(700);
+const atFoot = await barState();
+if (!atTop?.inert || atTop.onScreen) note("/products/[slug]", "buybar", "bar is live at the top of the page");
+if (past?.inert || !past?.onScreen) note("/products/[slug]", "buybar", "bar did not appear past the buy box");
+if (barQty !== "1") note("/products/[slug]", "buybar", `Add from the bar gave quantity "${barQty}"`);
+if (!atFoot?.inert) note("/products/[slug]", "buybar", "bar still live over the footer");
+console.log(`  buy bar: top inert ${atTop?.inert}, shown ${past?.onScreen}, add → ${barQty}, footer inert ${atFoot?.inert}`);
+await phone.close();
 
 await page.close();
 await browser.close();

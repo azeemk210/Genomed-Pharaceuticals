@@ -10,6 +10,7 @@
     "og": "node scripts/make-og.mjs",
     "test:browser": "node scripts/browser-test.mjs",
     "test:ux": "node scripts/ux-audit.mjs",
+    "test:responsive": "node scripts/responsive-sweep.mjs",
     "shoot": "node scripts/shoot.mjs"
   },
   "dependencies": {

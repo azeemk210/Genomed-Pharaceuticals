@@ -1,7 +1,5 @@
 import type { Metadata } from "next";
-import PageHero from "@/components/PageHero";
 import CartClient from "./CartClient";
-import { media } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Enquiry List",
@@ -11,17 +9,8 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
+/* No banner: the list is the page. A shopper who taps the bag icon wants to see
+   what is in it, not a video and a paragraph first. */
 export default function CartPage() {
-  return (
-    <>
-      <PageHero
-        eyebrow="Your enquiry list"
-        title="Shortlist, then send it to us in one go"
-        lede="Genomed supplies through distributors and institutional buyers rather than selling online, so this list becomes an order enquiry — we reply with trade pricing and availability for your territory."
-        video={media.qc}
-        crumb={[{ label: "Enquiry list" }]}
-      />
-      <CartClient />
-    </>
-  );
+  return <CartClient />;
 }

@@ -129,6 +129,8 @@
     font-family: var(--font-sans);
     font-size: var(--text-lg);
     line-height: 1.72;
+    /* A URL or email longer than a 320px column breaks rather than widening the page. */
+    overflow-wrap: break-word;
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
@@ -420,6 +422,13 @@
   );
   box-shadow: inset 0 -1px 0 rgb(7 29 24 / 0.07);
 }
+
+/* Phone filter sheet: rises from the edge it is anchored to, over a fading
+   scrim. 280ms in; the global reduced-motion rule makes both instant. */
+@keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+@keyframes scrim-in { from { opacity: 0; } to { opacity: 1; } }
+.sheet-up { animation: sheet-up 0.28s var(--ease-out-expo) both; }
+.scrim-in { animation: scrim-in 0.2s ease-out both; }
 
 /* Foot of the header's main row: gold into brand green, fading out into the
    ordinary hairline. The only decorative stroke in the header, and it carries

@@ -7,7 +7,7 @@ import { useStore } from "@/components/StoreProvider";
 import { getProduct } from "@/lib/products";
 
 export default function SavedClient() {
-  const { ready, saved, add } = useStore();
+  const { ready, saved, add, cart } = useStore();
 
   if (!ready) return <div className="shell py-24" aria-busy="true" />;
 
@@ -45,7 +45,13 @@ export default function SavedClient() {
         </p>
         <button
           type="button"
-          onClick={() => items.forEach((p) => add(p.slug, 1))}
+          // Adds only what is not already listed — quantities already set in the
+          // list are left alone rather than each bumped by one.
+          onClick={() =>
+            items.forEach((p) => {
+              if (!cart.some((l) => l.slug === p.slug)) add(p.slug, 1);
+            })
+          }
           className="inline-flex min-h-11 items-center gap-2 border border-sand-300 bg-white px-5 py-3 text-sm font-bold text-forest-800 transition-colors hover:border-forest-600"
         >
           <ShoppingBag className="h-4 w-4" />
