@@ -14,7 +14,7 @@ export default function Footer() {
           <div>
             <Logo />
             <p className="mt-6 max-w-[38ch] text-sm leading-relaxed text-sand-600">
-              An Ayurvedic formulation manufacturer in Bulandshahr, Uttar Pradesh,
+              A herbal formulation manufacturer in Bulandshahr, Uttar Pradesh,
               supplying liver, metabolic, renal, gynaecological and dermatological
               medicines to distributors and healthcare partners across India.
             </p>
@@ -119,7 +119,7 @@ export default function Footer() {
         </div>
 
         <p className="max-w-[96ch] py-8 text-caption leading-relaxed text-sand-600">
-          Genomed products are Ayurvedic proprietary medicines manufactured under licence in
+          Genomed products are herbal proprietary medicines manufactured under licence in
           India. Information on this website is intended for distributors, healthcare
           professionals and general reference. It is not medical advice and does not replace
           consultation with a qualified practitioner. Always read the pack insert before use.

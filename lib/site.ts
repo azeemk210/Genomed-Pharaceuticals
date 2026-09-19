@@ -12,7 +12,7 @@ export const site = {
   legalName: "Genomed Pharmaceuticals",
   tagline: "Your health, our priority",
   description:
-    "Genomed Pharmaceuticals is an Ayurvedic formulation manufacturer in Bulandshahr, Uttar Pradesh, producing liver, metabolic, renal, gynaecological and dermatological medicines for distributors and healthcare partners across India.",
+    "Genomed Pharmaceuticals is a herbal formulation manufacturer in Bulandshahr, Uttar Pradesh, producing liver, metabolic, renal, gynaecological and dermatological medicines for distributors and healthcare partners across India.",
   url: "https://www.genomedpharmaceuticals.com",
 } as const;
 
@@ -83,7 +83,7 @@ export const stats = [
     // up the page, and the repeat reads as a mistake.
     image: "/media/lab-quality-poster.jpg",
   },
-  { value: 100, suffix: "%", label: "Ayurvedic compositions", image: "/stats/powders.webp" },
+  { value: 100, suffix: "%", label: "Herbal compositions", image: "/stats/powders.webp" },
   {
     value: 4,
     suffix: "",
@@ -99,8 +99,8 @@ export const stats = [
  */
 export const credentials = [
   {
-    title: "Ayurvedic Drug Manufacturing Licence",
-    body: "Manufactured under licence issued by the Ayurvedic & Unani Services, Government of Uttar Pradesh, under the Drugs and Cosmetics Act, 1940.",
+    title: "Drug Manufacturing Licence",
+    body: "Manufactured under licence issued by the Government of Uttar Pradesh, under the Drugs and Cosmetics Act, 1940.",
     reference: "",
     verified: false,
   },

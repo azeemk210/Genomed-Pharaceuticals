@@ -14,7 +14,7 @@ import { therapies } from "@/lib/products";
 export const metadata: Metadata = {
   title: "About Genomed",
   description:
-    "Genomed Pharmaceuticals is an Ayurvedic formulation manufacturer based in Bulandshahr, Uttar Pradesh, producing medicines across eight therapeutic areas for distributors and healthcare partners across India.",
+    "Genomed Pharmaceuticals is a herbal formulation manufacturer based in Bulandshahr, Uttar Pradesh, producing medicines across eight therapeutic areas for distributors and healthcare partners across India.",
   alternates: { canonical: "/about" },
 };
 
@@ -27,7 +27,7 @@ const VALUES = [
   {
     icon: Leaf,
     title: "Respect the tradition",
-    body: "Ayurvedic formulation is an inherited discipline with its own logic. We modernise how we control and document it, not what it is.",
+    body: "Herbal formulation is an inherited discipline with its own logic. We modernise how we control and document it, not what it is.",
   },
   {
     icon: ClipboardList,
@@ -54,7 +54,7 @@ export default function AboutPage() {
     <>
       <PageHero
         eyebrow="About Genomed"
-        title="Ayurvedic medicine, manufactured with a pharmaceutical discipline"
+        title="Herbal medicine, manufactured with a pharmaceutical discipline"
         lede="We formulate and produce from our own premises in Bulandshahr, Uttar Pradesh, supplying distributors, stockists and clinics who need a source they can rely on."
         video={media.mortar}
         crumb={[{ label: "About" }]}
@@ -71,12 +71,12 @@ export default function AboutPage() {
           </Reveal>
           <Reveal delay={150} className="mt-6 space-y-5 text-sand-600">
             <p>
-              Ayurvedic medicine in India has never had a shortage of good formulations. What
+              Herbal medicine in India has never had a shortage of good formulations. What
               it has often lacked is consistency — the same brand behaving differently from
               one batch to the next, arriving late, or arriving with no paperwork behind it.
             </p>
             <p>
-              Genomed was set up to close that gap. We treat an Ayurvedic formulation the way
+              Genomed was set up to close that gap. We treat a herbal formulation the way
               a conventional pharmaceutical plant treats a tablet: a written master formula,
               tested raw material, defined process parameters, recorded deviations, and a
               batch number on every pack that leads back to the file behind it.
@@ -93,7 +93,7 @@ export default function AboutPage() {
           <h3 className="text-2xl">Genomed at a glance</h3>
           <dl className="mt-6 space-y-5">
             {[
-              ["Business", "Ayurvedic formulation manufacturer"],
+              ["Business", "Herbal formulation manufacturer"],
               ["Facility", contact.addressLines.join(", ")],
               ["Portfolio", "10 formulations, 8 therapeutic areas"],
               ["Dosage forms", "Syrup, liquid, powder, capsule"],
@@ -129,7 +129,7 @@ export default function AboutPage() {
           <Reveal className="border border-sand-300 bg-white/85 p-8 backdrop-blur-sm md:p-10">
             <Eyebrow tone="onVideo">Our vision</Eyebrow>
             <h2 className="mt-6 text-3xl font-normal italic leading-snug">
-              To make Ayurvedic medicine something a physician can prescribe with the same
+              To make herbal medicine something a physician can prescribe with the same
               confidence as anything else on the shelf.
             </h2>
           </Reveal>
@@ -241,7 +241,7 @@ export default function AboutPage() {
       <CTABand
         eyebrow="Work with us"
         title="Distributors, stockists and institutional buyers"
-        body="If you supply pharmacies, clinics or hospitals and want a dependable Ayurvedic range behind you, we would like to hear from you."
+        body="If you supply pharmacies, clinics or hospitals and want a dependable herbal range behind you, we would like to hear from you."
       />
     </>
   );

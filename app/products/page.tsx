@@ -13,7 +13,7 @@ import { ArrowRight } from "lucide-react";
 export const metadata: Metadata = {
   title: "Product Portfolio",
   description:
-    "Genomed's Ayurvedic product portfolio across eight therapeutic areas — liver care, metabolic care, renal care, women's health, dermatology, haemostatics, men's wellness and general wellness.",
+    "Genomed's herbal product portfolio across eight therapeutic areas — liver care, metabolic care, renal care, women's health, dermatology, haemostatics, men's wellness and general wellness.",
   alternates: { canonical: "/products" },
 };
 

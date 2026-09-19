@@ -10,7 +10,7 @@ import { contact, media } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
-    "Contact Genomed Pharmaceuticals — Ayurvedic formulation manufacturer in Bulandshahr, Uttar Pradesh. Phone, email, address and business enquiry form.",
+    "Contact Genomed Pharmaceuticals — herbal formulation manufacturer in Bulandshahr, Uttar Pradesh. Phone, email, address and business enquiry form.",
   alternates: { canonical: "/contact" },
 };
 

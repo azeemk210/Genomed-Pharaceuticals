@@ -10,7 +10,7 @@ import { contact, media } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Partner With Us",
   description:
-    "Distributor appointments, institutional supply and third-party Ayurvedic manufacturing with Genomed Pharmaceuticals. Send us your territory and requirements for pricing, margins and product literature.",
+    "Distributor appointments, institutional supply and third-party herbal manufacturing with Genomed Pharmaceuticals. Send us your territory and requirements for pricing, margins and product literature.",
   alternates: { canonical: "/partner" },
 };
 
@@ -23,12 +23,12 @@ const AUDIENCES = [
   {
     icon: ClipboardList,
     title: "Institutional buyers",
-    body: "Hospitals, clinics and Ayurvedic dispensaries buying directly. We supply specifications, certificates of analysis and documentation for your vendor-qualification file.",
+    body: "Hospitals, clinics and herbal dispensaries buying directly. We supply specifications, certificates of analysis and documentation for your vendor-qualification file.",
   },
   {
     icon: Factory,
     title: "Third-party manufacturing",
-    body: "Contract manufacture of Ayurvedic formulations under your own brand, from our existing range or to your formula, subject to feasibility.",
+    body: "Contract manufacture of herbal formulations under your own brand, from our existing range or to your formula, subject to feasibility.",
   },
 ];
 

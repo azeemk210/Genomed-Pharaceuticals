@@ -331,6 +331,96 @@
    mixes with the group's own transparent backdrop — i.e. does nothing. */
 .pack-blend { mix-blend-mode: multiply; }
 
+/* ==========================================================================
+   Hero pack trio
+   ========================================================================== */
+
+/* Entrance: each pack rises onto the stage. The two side packs also travel in
+   from their own side (--from-x), so the group assembles rather than fades up.
+   480ms: long enough for objects this large to read as placed, under the
+   500ms point where an entrance starts to feel slow. */
+@keyframes pack-rise {
+  from { opacity: 0; transform: translate3d(var(--from-x, 0px), 56px, 0) scale(0.94); }
+  to   { opacity: 1; transform: none; }
+}
+.pack-enter {
+  animation: pack-rise 0.48s var(--ease-out-expo) both;
+  animation-delay: var(--enter-delay, 0ms);
+}
+
+/* Idle: a slow 8px bob. All three run the same 6s cycle from a different
+   point (negative delay), so they never move in step. */
+@keyframes pack-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+.pack-float {
+  animation: pack-float 6s ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+
+/* The contact shadow stays on the floor and answers the bob — tighter and
+   fainter as the pack lifts, spreading back as it settles. Same cycle and
+   delay as .pack-float, so the two stay locked together. */
+@keyframes pack-shadow {
+  0%, 100% { transform: scaleX(1);    opacity: 0.6; }
+  50%      { transform: scaleX(0.84); opacity: 0.38; }
+}
+.pack-shadow {
+  background: radial-gradient(closest-side, rgb(7 29 24 / 0.55), transparent);
+  animation: pack-shadow 6s ease-in-out infinite;
+  animation-delay: var(--float-delay, 0s);
+}
+
+/* Pointer parallax. HeroPacks writes --mx/--my (−1…1) on the stage; each pack
+   scales them by its own --depth, so nearer packs travel further. */
+.pack-parallax {
+  transform: translate3d(
+    calc(var(--mx, 0) * var(--depth, 1) * 14px),
+    calc(var(--my, 0) * var(--depth, 1) * 8px),
+    0
+  );
+  transition: transform 0.3s var(--ease-out-expo);
+}
+
+/* White display podium the packs stand on — a cylinder drawn in CSS: a lit
+   elliptical top face over a side band shaded light-to-dark across its width,
+   with a soft drop shadow beneath. Width comes from --pw on the display. */
+.podium {
+  position: relative;
+  width: var(--pw);
+  aspect-ratio: 3 / 1;
+}
+.podium::before {
+  content: "";
+  position: absolute;
+  inset: 22% 0 0 0;
+  border-radius: 0 0 50% 50% / 0 0 34% 34%;
+  background: linear-gradient(
+    90deg,
+    var(--color-sand-200) 0%,
+    var(--color-sand-50) 38%,
+    var(--color-sand-0) 52%,
+    var(--color-sand-100) 78%,
+    var(--color-sand-200) 100%
+  );
+  box-shadow: 0 26px 30px -20px rgb(7 29 24 / 0.32);
+}
+.podium::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 44%;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse 62% 70% at 50% 42%,
+    var(--color-sand-0) 0%,
+    var(--color-sand-100) 72%,
+    var(--color-sand-200) 100%
+  );
+  box-shadow: inset 0 -1px 0 rgb(7 29 24 / 0.07);
+}
+
 /* Foot of the header's main row: gold into brand green, fading out into the
    ordinary hairline. The only decorative stroke in the header, and it carries
    both brand colours in one line. */
@@ -342,14 +432,6 @@
     var(--color-sand-200) 62%,
     var(--color-sand-200) 100%
   );
-}
-
-/* Squared-off status chip. The ring is a second, softer shadow rather than a
-   border, so the dot reads as lit instead of outlined. */
-.hero-dot {
-  box-shadow:
-    0 0 0 3px rgba(38, 141, 107, 0.16),
-    0 0 0 6px rgba(38, 141, 107, 0.07);
 }
 
 /* Type reveal. The line slides up from behind its own baseline rather than

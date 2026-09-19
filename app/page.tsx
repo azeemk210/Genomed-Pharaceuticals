@@ -65,7 +65,7 @@ export default function Home() {
             </Reveal>
             <Reveal delay={150} className="mt-6 space-y-5 text-sand-600">
               <p>
-                Genomed was built around a straightforward idea: Ayurvedic medicine deserves
+                Genomed was built around a straightforward idea: herbal medicine deserves
                 the same manufacturing discipline that conventional pharmaceuticals take for
                 granted. Written master formulas. Tested raw material. Recorded deviations.
                 A batch number on every pack that leads back to the records behind it.

@@ -77,7 +77,7 @@ export const therapies: Therapy[] = [
     name: 'Metabolic Care',
     subtitle: 'Diabetology',
     summary:
-      'Ayurvedic liquids and syrups supporting blood-sugar management and metabolic balance.',
+      'Herbal liquids and syrups supporting blood-sugar management and metabolic balance.',
     body: 'Formulations intended to sit alongside dietary and lifestyle management in patients under a physician’s care for raised blood sugar.',
     icon: 'metabolic',
   },
@@ -106,7 +106,7 @@ export const therapies: Therapy[] = [
     subtitle: 'Dermatology',
     summary:
       'Sugar-free syrups working on skin complaints through blood purification.',
-    body: 'The dermatology line follows the classical Ayurvedic approach of treating skin presentations through blood purification rather than topically alone.',
+    body: 'The dermatology line follows the classical herbal approach of treating skin presentations through blood purification rather than topically alone.',
     icon: 'derma',
   },
   {
@@ -132,7 +132,7 @@ export const therapies: Therapy[] = [
     image: '/areas/general-wellness.webp',
     name: 'General Wellness',
     subtitle: 'Tonics & Distillates',
-    summary: 'Classical Ayurvedic distillates and general tonics in large packs.',
+    summary: 'Classical herbal distillates and general tonics in large packs.',
     body: 'Classical preparations supplied in larger pack sizes for general and supportive use.',
     icon: 'tonic',
   },
@@ -195,7 +195,7 @@ export const products: Product[] = [
     pack: '500 ml bottle',
     mrp: 238,
     positioning:
-      'An Ayurvedic oral liquid supplied in a 500 ml pack, intended to support blood-sugar management as part of physician-directed care.',
+      'A herbal oral liquid supplied in a 500 ml pack, intended to support blood-sugar management as part of physician-directed care.',
     indications: [
       'Supportive care in raised blood sugar',
       'Long-course metabolic support',
@@ -233,7 +233,7 @@ export const products: Product[] = [
     pack: '100 g container',
     mrp: 190,
     positioning:
-      'A powdered Ayurvedic preparation for reconstitution, formulated to support kidney function and urinary tract comfort.',
+      'A powdered herbal preparation for reconstitution, formulated to support kidney function and urinary tract comfort.',
     indications: [
       'Supportive renal care',
       'Urinary tract comfort',
@@ -295,7 +295,7 @@ export const products: Product[] = [
     pack: '200 ml bottle',
     mrp: 166,
     positioning:
-      'A sugar-free syrup working on dermatological presentations through blood purification, following the classical Ayurvedic approach to skin complaints.',
+      'A sugar-free syrup working on dermatological presentations through blood purification, following the classical herbal approach to skin complaints.',
     indications: [
       'Supportive care in skin complaints',
       'Blood purification regimens',
@@ -329,13 +329,13 @@ export const products: Product[] = [
     photo: '/products/arq-15.webp',
     badge: 'HOT',
     name: 'ARQ-15',
-    descriptor: 'Classical Ayurvedic distillate',
+    descriptor: 'Classical herbal distillate',
     therapy: 'general-wellness',
     form: 'Liquid',
     pack: '450 ml bottle',
     mrp: 171,
     positioning:
-      'A classical arq — an Ayurvedic distillate — supplied in a 450 ml pack for general and supportive use.',
+      'A classical arq — a herbal distillate — supplied in a 450 ml pack for general and supportive use.',
     indications: ['General and supportive wellness use'],
     composition: [],
     dosage: '',
