@@ -151,7 +151,7 @@ export function AddToCartPanel({ product }: { product: Product }) {
             add(product.slug, qty);
             setDone(true);
           }}
-          className="group inline-flex min-h-11 flex-1 items-center justify-center gap-2 bg-forest-700 px-7 py-4 text-sm font-bold text-white transition-colors hover:bg-forest-800 sm:flex-none"
+          className="group inline-flex min-h-11 flex-1 items-center justify-center gap-2 whitespace-nowrap bg-forest-700 px-7 py-4 text-sm font-bold text-white transition-colors hover:bg-forest-800 sm:flex-none"
         >
           <ShoppingBag className="h-4 w-4" />
           Add to enquiry

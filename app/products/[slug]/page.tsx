@@ -333,7 +333,7 @@ export default async function ProductPage({
                 <Detail title="Dosage">
                   <p>
                     {product.dosage ||
-                      "To be taken as directed by a registered Ayurvedic practitioner or physician. Dosage schedules for each indication are set out in the product literature."}
+                      "To be taken as directed by a registered practitioner or physician. Dosage schedules for each indication are set out in the product literature."}
                   </p>
                 </Detail>
 
@@ -359,7 +359,7 @@ export default async function ProductPage({
               <aside className="mt-8 border-l-2 border-gold-500 bg-gold-50 px-5 py-4">
                 <p className="text-sm leading-relaxed text-sand-700">
                   <strong className="font-semibold text-forest-950">Important. </strong>
-                  {product.name} is an Ayurvedic proprietary medicine. This page is for
+                  {product.name} is a herbal proprietary medicine. This page is for
                   distributors, healthcare professionals and general reference — it is not a
                   prescription or medical advice, and does not replace consultation with a
                   qualified practitioner. Always read the pack insert before use.

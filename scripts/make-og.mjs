@@ -52,7 +52,7 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
   <text x="88" y="312" font-family="Georgia, 'Times New Roman', serif" font-size="68" font-weight="700" fill="#ffffff">Classical medicine,</text>
   <text x="88" y="392" font-family="Georgia, 'Times New Roman', serif" font-size="68" font-weight="700" fill="#ecc96d">made to a modern standard.</text>
 
-  <text x="88" y="458" font-family="'Segoe UI', Arial, sans-serif" font-size="24" fill="#afdfca">Ayurvedic formulation manufacturer &#183; Bulandshahr, Uttar Pradesh</text>
+  <text x="88" y="458" font-family="'Segoe UI', Arial, sans-serif" font-size="24" fill="#afdfca">Herbal formulation manufacturer &#183; Bulandshahr, Uttar Pradesh</text>
 
   <g font-family="'Segoe UI', Arial, sans-serif" font-size="18" font-weight="700" fill="#7cc7a9">
     <rect x="88"  y="514" width="224" height="46" fill="#ffffff" fill-opacity="0.07" stroke="#ffffff" stroke-opacity="0.16"/>

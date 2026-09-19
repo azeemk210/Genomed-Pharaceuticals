@@ -19,7 +19,7 @@ const SECTIONS: [string, string[]][] = [
   [
     "This site is not medical advice",
     [
-      "Genomed products are Ayurvedic proprietary medicines. Everything on this site — product pages, indications, descriptions and general articles — is published for distributors, healthcare professionals and general reference. It is not a prescription, not a diagnosis, and not a substitute for consulting a qualified practitioner.",
+      "Genomed products are herbal proprietary medicines. Everything on this site — product pages, indications, descriptions and general articles — is published for distributors, healthcare professionals and general reference. It is not a prescription, not a diagnosis, and not a substitute for consulting a qualified practitioner.",
       "Do not start, stop or change any treatment on the basis of this website. Always read the pack insert, and take medicines only as directed by a registered practitioner or physician.",
     ],
   ],

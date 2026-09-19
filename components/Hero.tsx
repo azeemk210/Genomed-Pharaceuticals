@@ -1,36 +1,25 @@
 import Link from "next/link";
 import { ArrowRight, ShieldCheck, FlaskConical, ClipboardList, Truck } from "lucide-react";
-import VideoBackdrop from "./VideoBackdrop";
-import { media } from "@/lib/site";
+import HeroPacks from "./HeroPacks";
 
 /**
- * Homepage hero — centred statement over a full-bleed cinematic band.
+ * Homepage hero — centred statement flanked by packs on white podiums.
  *
- * The composition is deliberately vertical rather than split: the claim gets
- * the full measure of the page to itself, then the band arrives edge to edge
- * underneath it, and the four credentials float up over the band's lower edge
- * on white cards. Nothing competes with the headline for the first screen, and
- * the licence still lands above the fold.
+ * The claim sits in the middle of the page; on wide screens two podium
+ * displays stand either side of it (see HeroPacks), and below that width they
+ * line up in a row under the buttons. The four credentials close the hero as a
+ * row of white cards, so the licence is still part of the first section.
  *
- * Three things carry the style:
- *   1. `.hero-aurora` — three wide colour blooms, no texture. The type is the
- *      subject; the ground only has to stop the page reading as flat white.
- *   2. The band breaks the container. It is a sibling of `.shell`, not a child,
- *      so it spans the viewport without the `w-screen` trick, which adds a
- *      scrollbar's width of horizontal overflow.
- *   3. The credential cards overlap the band. That overlap is the only depth in
- *      the design, and it is what ties the two halves into one object rather
- *      than two stacked strips.
- *
- * Server component: the reveal is pure CSS, so nothing hydrates before the
- * largest text on the site can paint.
+ * `.hero-aurora` paints the ground: three wide colour blooms, no texture.
+ * Server component: the headline reveal is pure CSS, so nothing hydrates
+ * before the largest text on the site can paint.
  */
 
 const TRUST = [
   {
     icon: ShieldCheck,
     title: "Licensed manufacture",
-    body: "Made under an Ayurvedic drug licence, to Schedule T GMP.",
+    body: "Made under a state drug manufacturing licence, to Schedule T GMP.",
   },
   {
     icon: FlaskConical,
@@ -72,19 +61,10 @@ export default function Hero() {
   return (
     <section className="hero-aurora relative overflow-hidden border-b border-sand-200 pt-10 md:pt-14">
       {/* ============================= STATEMENT ============================= */}
-      <div className="shell flex flex-col items-center text-center">
-        <p
-          className="inline-flex items-center gap-2.5 border border-sand-200 bg-white px-4 py-2 text-caption font-medium tracking-wide text-forest-900 shadow-sm"
-          style={{ animation: "hero-in .4s var(--ease-out-expo) both" }}
-        >
-          <span aria-hidden="true" className="hero-dot block h-1.5 w-1.5 flex-none bg-forest-500" />
-          Ayurvedic formulation manufacturer
-          {/* Costs the chip a second line at 390px, where it only just fits on one. */}
-          <span className="hidden sm:inline">· Bulandshahr, U.P.</span>
-        </p>
+      <div className="shell relative flex flex-col items-center text-center">
 
-        <h1 className="mt-6 max-w-4xl font-display text-5xl leading-[1.02] font-semibold tracking-[-0.025em] text-balance text-forest-950 md:mt-7">
-          <Line delay={60}>Ayurveda, built to</Line>
+        <h1 className="max-w-4xl font-display text-5xl leading-[1.02] font-semibold tracking-[-0.025em] text-balance text-forest-950">
+          <Line delay={60}>Herbal, built to</Line>
           <Line delay={170} className="text-gold-700">
             pharmaceutical standards.
           </Line>
@@ -120,33 +100,14 @@ export default function Hero() {
             Become a distributor
           </Link>
         </div>
-      </div>
 
-      {/* ================== FULL-BLEED BAND + FLOATING CARDS ================== */}
-      {/* Outside `.shell` on purpose — see the note at the top of the file. */}
-      <div
-        className="relative mt-10 h-[58vw] max-h-[360px] min-h-[230px] overflow-hidden md:mt-12"
-        style={{ animation: "hero-in .4s var(--ease-out-expo) 460ms both" }}
-      >
-        <VideoBackdrop src={media.heroHerbs.src} poster={media.heroHerbs.poster} kenburns />
-        {/* Fades the footage into the ground at both edges, so the band reads as
-            part of the page rather than a photo dropped into a slot. */}
-        <span
-          aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-sand-50 to-transparent"
-        />
-        {/* Deepens the foot of the band so the white cards lifted over it read
-            as floating rather than pasted on. */}
-        <span
-          aria-hidden="true"
-          className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-forest-990/45 to-transparent"
-        />
+        {/* Podium displays: beside the copy on xl, a row under it below that. */}
+        <HeroPacks className="mt-12 md:mt-14 xl:mt-0" />
       </div>
 
       {/* The licence is the highest-value thing on a pharmaceutical page, so it
-          sits here — lifted over the band, above the fold — rather than in a
-          separate strip further down the page. */}
-      <div className="shell relative -mt-12 pb-14 md:-mt-16 md:pb-20">
+          stays inside the hero rather than in a separate strip further down. */}
+      <div className="shell relative mt-14 pb-14 md:mt-20 md:pb-20 xl:mt-24">
         <ul className="grid grid-cols-1 gap-px border border-sand-200 bg-sand-200 shadow-raise-md sm:grid-cols-2 lg:grid-cols-4">
           {TRUST.map(({ icon: Icon, title, body }) => (
             <li key={title} className="group flex flex-col gap-3 bg-white p-5 md:p-6">

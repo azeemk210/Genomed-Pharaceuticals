@@ -25,7 +25,7 @@ const manrope = Manrope({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: "Genomed Pharmaceuticals — Ayurvedic Medicine Manufacturer in India",
+    default: "Genomed Pharmaceuticals — Herbal Medicine Manufacturer in India",
     template: `%s | ${site.name}`,
   },
   description: site.description,
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
     siteName: site.name,
     locale: "en_IN",
     url: site.url,
-    title: "Genomed Pharmaceuticals — Ayurvedic Medicine Manufacturer in India",
+    title: "Genomed Pharmaceuticals — Herbal Medicine Manufacturer in India",
     description: site.description,
     images: [{ url: "/og.png", width: 1200, height: 630, alt: site.name }],
   },

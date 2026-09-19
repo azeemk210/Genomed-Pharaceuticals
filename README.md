@@ -122,6 +122,7 @@ is committed.
 | Favicon | the 2024 mark | `app/icon.png` |
 | Hero banners | `genomed-ban-1.jpg`, `genomed-ban-2.png` | `public/hero/slide-{1,2}.webp` |
 | Banner crop (powder bowls) | `genomed-ban-2.png` | `public/stats/powders.webp` |
+| Hero pack cut-outs | `public/media/{rimcuff,heamclear,sugar_ok}.jpeg` (supplied) | `public/hero/packs/*.webp` — via `scripts/cutout-hero-packs.mjs` |
 | Therapeutic-area photography | seven category images | `public/areas/*.webp` |
 | Pack shots | ten product featured images | `public/products/*.webp` |
 

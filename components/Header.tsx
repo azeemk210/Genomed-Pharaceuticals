@@ -34,6 +34,16 @@ export default function Header() {
   const [search, setSearch] = useState(false);
   const [mega, setMega] = useState(false);
   const megaRef = useRef<HTMLDivElement>(null);
+  const barRef = useRef<HTMLDivElement>(null);
+  const [drawerTop, setDrawerTop] = useState(0);
+  // The drawer opens directly under the pinned header at whatever height it
+  // has at this width. A fixed 76px offset hid the first item behind the
+  // phone search row, which makes the header ~140px tall.
+  const measureBar = () => setDrawerTop(barRef.current?.getBoundingClientRect().bottom ?? 0);
+  const toggleDrawer = () => {
+    measureBar();
+    setOpen((v) => !v);
+  };
   const { count, subtotal, saved, ready } = useStore();
   const areas = therapyCounts();
 
@@ -55,6 +65,14 @@ export default function Header() {
     setOpen(false);
     setMega(false);
   }
+
+  useEffect(() => {
+    if (!open) return;
+    // Re-measure if the phone rotates while the drawer is open.
+    const onResize = () => setDrawerTop(barRef.current?.getBoundingClientRect().bottom ?? 0);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [open]);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -114,7 +132,7 @@ export default function Header() {
         <div className="shell flex min-h-10 items-center justify-between gap-6 py-2 text-caption">
           <p className="inline-flex items-center gap-2">
             <MapPin className="h-3.5 w-3.5 text-gold-700" strokeWidth={1.7} />
-            Ayurvedic formulation manufacturer · {contact.addressShort}
+            Herbal formulation manufacturer · {contact.addressShort}
           </p>
           <div className="flex items-center gap-6">
             <span className="hidden items-center gap-2 lg:inline-flex">
@@ -142,6 +160,7 @@ export default function Header() {
       {/* Rows 2 and 3 pin together. Row 3 collapses on scroll so the commerce
           essentials stay reachable without 8rem of permanent chrome. */}
       <div
+        ref={barRef}
         className={`sticky top-0 z-50 transition-shadow duration-300 ${
           lifted ? "shadow-bar" : ""
         }`}
@@ -326,7 +345,7 @@ export default function Header() {
 
             <button
               type="button"
-              onClick={() => setOpen((v) => !v)}
+              onClick={toggleDrawer}
               aria-expanded={open}
               aria-controls="mobile-drawer"
               aria-label={open ? "Close menu" : "Open menu"}
@@ -348,7 +367,12 @@ export default function Header() {
       </div>
 
       {/* ═══════════ mobile drawer ═══════════ */}
-      <div id="mobile-drawer" hidden={!open} className="fixed inset-0 z-40 bg-sand-50 pt-[4.75rem] lg:hidden">
+      <div
+        id="mobile-drawer"
+        hidden={!open}
+        style={{ top: drawerTop }}
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-sand-200 bg-sand-50 lg:hidden"
+      >
         <div className="shell flex h-full flex-col overflow-y-auto py-8">
           <ul className="border-t border-sand-200">
             {nav.map((item) => (
