@@ -1,0 +1,400 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Genomed Pharmaceuticals — design system
+   --------------------------------------------------------------------------
+   Two hues only, each with a full ramp:
+     1. Forest  — the brand. Deep botanical green, pushed to near-black at the
+                  dark end so video sections read premium rather than murky.
+     2. Gold    — the accent. Luminous on dark, restrained on light.
+   Neutrals are green-biased, never neutral grey.
+   ========================================================================== */
+
+@theme {
+  /* ---- 1. Forest ---- */
+  --color-forest-50:  #eff8f4;
+  --color-forest-100: #d6efe4;
+  --color-forest-200: #afdfca;
+  --color-forest-300: #7cc7a9;
+  --color-forest-400: #47a985;
+  --color-forest-500: #268d6b;
+  --color-forest-600: #167056;
+  --color-forest-700: #135a47;
+  --color-forest-800: #12483a;
+  --color-forest-900: #0f3a30;
+  --color-forest-950: #071d18;
+  --color-forest-990: #04120f;
+
+  /* ---- 2. Gold ---- */
+  --color-gold-50:  #fdfaef;
+  --color-gold-100: #faf1d4;
+  --color-gold-200: #f4e0a5;
+  --color-gold-300: #ecc96d;
+  --color-gold-400: #e3b344;
+  --color-gold-500: #d69c28;
+  --color-gold-600: #bb7d1e;
+  --color-gold-700: #955d1c;
+  --color-gold-800: #7a4a1e;
+  --color-gold-900: #683e1d;
+
+  /* ---- Green-biased neutrals ---- */
+  --color-sand-0:   #ffffff;
+  --color-sand-50:  #f8faf9;
+  --color-sand-100: #f0f4f2;
+  --color-sand-200: #e1e8e5;
+  --color-sand-300: #c7d3ce;
+  --color-sand-400: #9aaaa4;
+  --color-sand-500: #71827c;
+  --color-sand-600: #55655f;
+  --color-sand-700: #3f4d48;
+  --color-sand-800: #2b3733;
+  --color-sand-900: #1a221f;
+
+  /* ---- Type ---- */
+  --font-display: var(--font-fraunces), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-manrope), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  /* Industry-standard editorial scale. Every step is clamped so the same
+     token works from a 360px phone to a 1920px monitor. */
+  --text-eyebrow: 0.75rem;
+  --text-eyebrow--line-height: 1.2;
+  --text-eyebrow--letter-spacing: 0.18em;
+
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.5;
+
+  --text-sm: 0.875rem;
+  --text-sm--line-height: 1.6;
+
+  --text-base: 1rem;
+  --text-base--line-height: 1.7;
+
+  --text-lg: 1.0625rem;
+  --text-lg--line-height: 1.72;
+
+  --text-xl: clamp(1.125rem, 0.4vw + 1.03rem, 1.3125rem);
+  --text-xl--line-height: 1.6;
+
+  --text-2xl: clamp(1.375rem, 0.7vw + 1.21rem, 1.75rem);
+  --text-2xl--line-height: 1.35;
+
+  --text-3xl: clamp(1.625rem, 1.3vw + 1.32rem, 2.25rem);
+  --text-3xl--line-height: 1.24;
+
+  --text-4xl: clamp(2rem, 2.4vw + 1.44rem, 3rem);
+  --text-4xl--line-height: 1.14;
+
+  --text-5xl: clamp(2.5rem, 4vw + 1.56rem, 4.25rem);
+  --text-5xl--line-height: 1.06;
+
+  --text-6xl: clamp(3rem, 6.2vw + 1.54rem, 5.75rem);
+  --text-6xl--line-height: 0.98;
+
+  /* ---- Elevation ----
+     One scale instead of a new shadow per component. All four are tinted with
+     the forest near-black rather than grey, and all use a negative spread so
+     the shadow sits under the element instead of haloing it.
+       raise-sm  small controls (the header CTA)
+       raise-md  cards and raised panels, and hover lift
+       raise-lg  overlays (the search dialog)
+       bar       the pinned header once the page scrolls under it          */
+  --shadow-raise-sm: 0 10px 24px -14px rgb(7 29 24 / 0.55);
+  --shadow-raise-md: 0 22px 48px -28px rgb(4 18 15 / 0.42);
+  --shadow-raise-lg: 0 40px 80px -40px rgb(4 18 15 / 0.55);
+  --shadow-bar:      0 12px 32px -26px rgb(4 18 15 / 0.6);
+
+  /* ---- Motion ---- */
+  --ease-brand: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+@layer base {
+  * {
+    border-color: var(--color-sand-200);
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    background: var(--color-sand-0);
+    color: var(--color-sand-900);
+    font-family: var(--font-sans);
+    font-size: var(--text-lg);
+    line-height: 1.72;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: hidden;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-variant-numeric: lining-nums;
+    letter-spacing: -0.022em;
+    text-wrap: balance;
+    color: var(--color-forest-950);
+  }
+
+  p { text-wrap: pretty; }
+
+  ::selection {
+    background: var(--color-gold-200);
+    color: var(--color-forest-990);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-gold-600);
+    outline-offset: 3px;
+  }
+
+  /* Tailwind v4's preflight no longer sets this on buttons, so every <button>
+     falls back to the arrow cursor and stops reading as clickable. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary {
+    cursor: pointer;
+  }
+
+  /* The square-box motif: hairline grids never double up their borders. */
+  input, select, textarea { font: inherit; }
+}
+
+/* ==========================================================================
+   Utilities
+   ========================================================================== */
+
+@utility shell {
+  width: 100%;
+  max-width: 84rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 3rem);
+}
+
+@utility shell-narrow {
+  width: 100%;
+  max-width: 56rem;
+  margin-inline: auto;
+  padding-inline: clamp(1.25rem, 4vw, 3rem);
+}
+
+/* Uppercase tracked label used above every section heading. */
+@utility eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-sans);
+  font-size: var(--text-eyebrow);
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+/* Gold rule that follows an eyebrow — lifted from the reference template's
+   label-plus-rule device, sharpened to a 2px square-ended bar. */
+@utility eyebrow-rule {
+  display: block;
+  width: 2.25rem;
+  height: 2px;
+  flex: none;
+  background: currentColor;
+}
+
+@utility hairline-grid {
+  border-top: 1px solid var(--color-sand-200);
+  border-left: 1px solid var(--color-sand-200);
+}
+
+@utility hairline-cell {
+  border-right: 1px solid var(--color-sand-200);
+  border-bottom: 1px solid var(--color-sand-200);
+}
+
+/* Numerals in tables, stats and spec lists line up.
+   `lining-nums` matters: Fraunces defaults to oldstyle figures, which gives 4
+   a descender and makes it sit visibly lower than 10 and 100 beside it. */
+@utility tnum {
+  font-variant-numeric: lining-nums tabular-nums;
+}
+
+/* Video sections are LIGHT: a near-opaque wash over the footage so the clip
+   reads as a faint texture behind dark text rather than a dark photograph.
+   Opacity is highest where the copy sits and eases off where it does not, so
+   the video is still visible without ever costing contrast. */
+@utility video-scrim {
+  background:
+    linear-gradient(
+      to right,
+      rgb(248 250 249 / 0.95) 0%,
+      rgb(248 250 249 / 0.9) 42%,
+      rgb(248 250 249 / 0.68) 74%,
+      rgb(240 244 242 / 0.55) 100%
+    ),
+    linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0.62) 0%,
+      rgb(255 255 255 / 0.28) 38%,
+      rgb(239 248 244 / 0.55) 100%
+    );
+}
+
+/* Full-width sections whose content is centred get an even wash. Kept a little
+   heavier than the split scrim because headings here sit directly on it rather
+   than inside a white panel. */
+@utility video-scrim-soft {
+  background:
+    linear-gradient(
+      to bottom,
+      rgb(255 255 255 / 0.8) 0%,
+      rgb(248 250 249 / 0.86) 45%,
+      rgb(239 248 244 / 0.84) 100%
+    );
+}
+
+/* ==========================================================================
+   Reveal animation — CSS-driven so it survives JS failure
+   ========================================================================== */
+
+/* 400ms: the ceiling for a complex transition under the Material motion
+   guidance, and still long enough to read as composed rather than snappy. */
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.4s var(--ease-out-expo),
+    transform 0.4s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* Thin animated line that draws itself in when a section enters view. */
+.draw-line {
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1s var(--ease-out-expo);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+.draw-line.is-in { transform: scaleX(1); }
+
+@keyframes kenburns {
+  from { transform: scale(1.06); }
+  to   { transform: scale(1.16); }
+}
+.kenburns { animation: kenburns 22s ease-out infinite alternate; }
+
+/* ==========================================================================
+   Hero — the batch-record sheet
+   ========================================================================== */
+
+/* Three wide, low-opacity blooms — two green, one gold — over an off-white
+   ground. No ruling, no texture: the type is the subject and the ground only
+   has to stop the page reading as flat white. Painted on the section's own
+   `background-image`, so there is no extra layer and no stacking context. */
+.hero-aurora {
+  background-color: var(--color-sand-50);
+  background-image:
+    radial-gradient(52% 46% at 14% 6%, rgba(38, 141, 107, 0.14), transparent 70%),
+    radial-gradient(44% 42% at 88% 12%, rgba(214, 156, 40, 0.13), transparent 72%),
+    radial-gradient(70% 40% at 50% 96%, rgba(19, 90, 71, 0.07), transparent 74%);
+}
+
+/* ==========================================================================
+   Product stage — the ground every pack stands on (cards and product page)
+   ========================================================================== */
+
+/* A lit centre over a pale sage floor, with a soft contact shadow where the
+   pack's base lands. Every pack is height-limited in its frame (they are all
+   portrait), so the base always sits at the same line and one shadow position
+   serves every product. */
+.product-stage {
+  background:
+    radial-gradient(58% 48% at 50% 40%, #ffffff 0%, rgba(255, 255, 255, 0) 72%),
+    radial-gradient(40% 7% at 50% 90%, rgba(7, 29, 24, 0.12), transparent 74%),
+    linear-gradient(180deg, var(--color-sand-50) 0%, var(--color-sand-100) 100%);
+}
+
+/* Pack photography is shot on white; multiply drops that white into the stage
+   so the pack stands on it instead of sitting in a white box. Set this on the
+   element that carries the hover transform, never on the <img> inside it: a
+   transform makes an isolated group, and a blend on a child of that group only
+   mixes with the group's own transparent backdrop — i.e. does nothing. */
+.pack-blend { mix-blend-mode: multiply; }
+
+/* Foot of the header's main row: gold into brand green, fading out into the
+   ordinary hairline. The only decorative stroke in the header, and it carries
+   both brand colours in one line. */
+.header-accent {
+  background: linear-gradient(
+    90deg,
+    var(--color-gold-500) 0%,
+    var(--color-forest-600) 28%,
+    var(--color-sand-200) 62%,
+    var(--color-sand-200) 100%
+  );
+}
+
+/* Squared-off status chip. The ring is a second, softer shadow rather than a
+   border, so the dot reads as lit instead of outlined. */
+.hero-dot {
+  box-shadow:
+    0 0 0 3px rgba(38, 141, 107, 0.16),
+    0 0 0 6px rgba(38, 141, 107, 0.07);
+}
+
+/* Type reveal. The line slides up from behind its own baseline rather than
+   fading in — the mask is what makes it read as typeset rather than animated.
+   Fraunces has deep descenders, so the mask is padded and the padding pulled
+   back off the layout, otherwise `overflow: hidden` clips every "y" and "p". */
+.line-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.14em;
+  margin-bottom: -0.14em;
+}
+.line-mask > span {
+  display: block;
+  animation: line-up 0.4s var(--ease-out-expo) both;
+  animation-delay: var(--line-delay, 0ms);
+}
+@keyframes line-up {
+  from { transform: translateY(105%); }
+  to   { transform: none; }
+}
+
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 38s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  .draw-line { transform: none !important; }
+  .kenburns, .marquee-track { animation: none !important; }
+}
