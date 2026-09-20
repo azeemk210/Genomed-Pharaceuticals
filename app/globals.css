@@ -430,6 +430,24 @@
 .sheet-up { animation: sheet-up 0.28s var(--ease-out-expo) both; }
 .scrim-in { animation: scrim-in 0.2s ease-out both; }
 
+/* Soft pool of ground colour behind the hero copy, so the headline, paragraph
+   and buttons read over the photograph without dimming the photograph itself.
+   Painted between the photo (z -10, earlier in the DOM) and the content. */
+.hero-glow::before {
+  content: "";
+  position: absolute;
+  z-index: -10;
+  inset: -14% 4% -8%;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 56% 66% at 50% 46%,
+    rgb(248 250 249 / 1) 0%,
+    rgb(248 250 249 / 0.98) 48%,
+    rgb(248 250 249 / 0.8) 68%,
+    rgb(248 250 249 / 0) 88%
+  );
+}
+
 /* Foot of the header's main row: gold into brand green, fading out into the
    ordinary hairline. The only decorative stroke in the header, and it carries
    both brand colours in one line. */

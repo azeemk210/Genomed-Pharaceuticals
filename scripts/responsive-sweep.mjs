@@ -16,6 +16,9 @@ const BASE = process.argv[2] || "http://localhost:3100";
 const SHOTS = ".sweep-shots";
 const WIDTHS = [320, 360, 375, 390, 414, 480, 600, 768, 820, 1024, 1180, 1280, 1440, 1920];
 const SHOOT = new Set([320, 390, 768, 1024, 1440]);
+/* Short screens: a scaled laptop display and phones held sideways. This is
+   where pinned columns and drawers outgrow the viewport. */
+const SHORT = [[1536, 640], [1366, 600], [1024, 600], [844, 390], [667, 375]];
 const ROUTES = [
   "/",
   "/about",
@@ -39,7 +42,7 @@ const note = (route, width, kind, detail) => problems.push({ route, width, kind,
 
 /* ---------- page-side checks ---------- */
 const CHECK = async () => {
-  const out = { overflow: null, poking: [], clipped: [], covered: [], misaligned: [], images: [] };
+  const out = { overflow: null, poking: [], clipped: [], covered: [], misaligned: [], images: [], pinned: [] };
   const vw = document.documentElement.clientWidth;
   if (document.documentElement.scrollWidth > vw + 1)
     out.overflow = `scrollWidth ${document.documentElement.scrollWidth} > ${vw}`;
@@ -78,6 +81,17 @@ const CHECK = async () => {
     if (s.position === "fixed") return;
     const r = el.getBoundingClientRect();
     if (r.right > vw + 1 || r.left < -1) out.poking.push(`${name(el)} ${Math.round(r.left)}→${Math.round(r.right)}`);
+  });
+
+  /* A pinned box taller than the space under its offset can never be scrolled
+     to its end — unless it scrolls within itself. */
+  document.querySelectorAll("main *").forEach((el) => {
+    const s = getComputedStyle(el);
+    if (s.position !== "sticky" || !shown(el)) return;
+    const room = innerHeight - (parseFloat(s.top) || 0);
+    const selfScrolls = /(auto|scroll)/.test(s.overflowY);
+    if (el.offsetHeight > room + 1 && !selfScrolls)
+      out.pinned.push(`${name(el)} is ${el.offsetHeight}px tall with ${Math.round(room)}px of room`);
   });
 
   const controls = [...document.querySelectorAll("a[href],button,select,input,textarea,summary")].filter(shown);
@@ -149,9 +163,9 @@ const links = new Set();
 
 for (const route of ROUTES) {
   const bad = [];
-  for (const width of WIDTHS) {
+  for (const [width, height] of [...WIDTHS.map((w) => [w, w < 768 ? 800 : 900]), ...SHORT]) {
     const ctx = await browser.newContext({
-      viewport: { width, height: width < 768 ? 800 : 900 },
+      viewport: { width, height },
       hasTouch: width < 1024,
       isMobile: width < 768,
       reducedMotion: "reduce", // reveals and sheets settle at once
@@ -173,21 +187,51 @@ for (const route of ROUTES) {
     await page.goto(BASE + route, { waitUntil: "networkidle" });
     await page.waitForTimeout(300);
     const r = await page.evaluate(CHECK);
-    if (r.overflow) note(route, width, "overflow", r.overflow);
-    for (const k of ["poking", "clipped", "covered", "misaligned", "images"])
-      [...new Set(r[k])].slice(0, 6).forEach((d) => note(route, width, k, d));
+    const at = height < 800 ? `${width}×${height}` : width;
+    if (r.overflow) note(route, at, "overflow", r.overflow);
+    for (const k of ["poking", "clipped", "covered", "misaligned", "images", "pinned"])
+      [...new Set(r[k])].slice(0, 6).forEach((d) => note(route, at, k, d));
 
-    if (width === 1440)
+    if (width === 1440 && height === 900)
       (await page.$$eval("a[href^='/']", (as) => as.map((a) => a.getAttribute("href")))).forEach((h) => links.add(h));
 
-    if (SHOOT.has(width)) {
+    if (SHOOT.has(width) && height >= 800) {
       const file = (route === "/" ? "home" : route.replace(/[/?=]/g, "_").replace(/^_/, "")) + `--${width}.png`;
       await page.screenshot({ path: `${SHOTS}/${file}`, fullPage: true });
     }
-    if (problems.length > before) bad.push(width);
+    if (problems.length > before) bad.push(height < 800 ? `${width}×${height}` : width);
     await ctx.close();
   }
   console.log(`${bad.length ? "✗" : "✓"} ${route.padEnd(34)} ${bad.length ? "fails at " + bad.join(", ") : "all widths"}`);
+}
+
+/* ---------- overlays on a phone held sideways ---------- */
+for (const [width, height] of [[844, 390], [667, 375]]) {
+  const c = await browser.newContext({ viewport: { width, height }, hasTouch: true, isMobile: true, reducedMotion: "reduce" });
+  const page = await c.newPage();
+  const reach = async (label, scope) => {
+    const r = await page.evaluate((sel) => {
+      const box = document.querySelector(sel);
+      if (!box) return "not found";
+      const items = [...box.querySelectorAll("a[href],button:not([tabindex='-1'])")].filter((e) => e.checkVisibility());
+      const last = items[items.length - 1];
+      last?.scrollIntoView({ block: "nearest" });
+      const b = last?.getBoundingClientRect();
+      return b && b.top >= 0 && b.bottom <= innerHeight + 1 ? null : `last control ends at ${Math.round(b?.bottom)}px of ${innerHeight}px`;
+    }, scope);
+    if (r) note(label, `${width}×${height}`, "unreachable", r);
+    return r;
+  };
+  await page.goto(`${BASE}/`, { waitUntil: "networkidle" });
+  await page.locator('button[aria-controls="mobile-drawer"]').click();
+  await page.waitForTimeout(400);
+  const d = await reach("mobile menu", "#mobile-drawer");
+  await page.goto(`${BASE}/products`, { waitUntil: "networkidle" });
+  await page.getByRole("button", { name: /^Filters/ }).click();
+  await page.waitForTimeout(400);
+  const f = await reach("filter sheet", "[role=dialog]");
+  console.log(`${d || f ? "✗" : "✓"} overlays at ${width}×${height}: menu ${d ?? "reachable"}, filter sheet ${f ?? "reachable"}`);
+  await c.close();
 }
 
 /* ---------- every internal link resolves ---------- */

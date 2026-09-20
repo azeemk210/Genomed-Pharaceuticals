@@ -178,13 +178,17 @@ export default async function ProductPage({
             {/* Pinned while the buy box scrolls. The offset clears both sticky
                 header rows (140px) plus a 20px gap. */}
             <div className="lg:sticky lg:top-40 lg:self-start">
-              <div className="product-stage relative aspect-[5/4] overflow-hidden border border-sand-200 lg:aspect-square">
+              {/* Height capped on lg so the pinned pack and its caption fit a short
+                  laptop viewport instead of being cut off at the bottom. */}
+              <div className="product-stage relative aspect-[5/4] overflow-hidden border border-sand-200 lg:aspect-auto lg:h-[clamp(20rem,calc(100dvh-15rem),36rem)]">
                 <div className="pack-blend absolute inset-[10%]">
                   <PackShot
                     form={product.form}
                     name={product.name}
                     pack={product.pack}
                     photo={product.photo}
+                    sizes="(min-width: 1024px) 40vw, 90vw"
+                    priority
                   />
                 </div>
                 {product.badge && (
@@ -254,20 +258,23 @@ export default async function ProductPage({
               {/* Pack facts */}
               <dl className="mt-8 grid grid-cols-1 gap-px border border-sand-200 bg-sand-200 sm:grid-cols-2">
                 {facts.map(({ icon: Icon, label, value }) => (
-                  <div key={label} className="flex items-start gap-3 bg-white p-4">
-                    <span className="grid h-9 w-9 flex-none place-items-center bg-forest-50 text-forest-700">
-                      {Icon ? (
-                        <Icon className="h-4 w-4" strokeWidth={1.7} aria-hidden="true" />
-                      ) : (
-                        <TherapyIcon name={therapy.icon} className="h-4 w-4" />
-                      )}
-                    </span>
-                    <div className="min-w-0">
-                      <dt className="text-[0.75rem] font-bold tracking-[0.14em] text-sand-600 uppercase">
-                        {label}
-                      </dt>
-                      <dd className="mt-0.5 text-sm font-semibold text-forest-950">{value}</dd>
-                    </div>
+                  // A <dl> group may contain only <dt> and <dd>, so the icon lives
+                  // inside the <dt>, placed in the gutter the padding leaves.
+                  <div key={label} className="relative min-w-0 bg-white py-4 pr-4 pl-16">
+                    <dt className="text-[0.75rem] font-bold tracking-[0.14em] text-sand-600 uppercase">
+                      <span
+                        aria-hidden="true"
+                        className="absolute top-4 left-4 grid h-9 w-9 place-items-center bg-forest-50 text-forest-700"
+                      >
+                        {Icon ? (
+                          <Icon className="h-4 w-4" strokeWidth={1.7} />
+                        ) : (
+                          <TherapyIcon name={therapy.icon} className="h-4 w-4" />
+                        )}
+                      </span>
+                      {label}
+                    </dt>
+                    <dd className="mt-0.5 text-sm font-semibold text-forest-950">{value}</dd>
                   </div>
                 ))}
               </dl>

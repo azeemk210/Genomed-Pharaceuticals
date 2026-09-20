@@ -23,6 +23,9 @@ const BACKUP = "scripts/.product-originals";
 const INK = 246; // a channel below this is pack, not paper
 const MIN_INK = 2; // a row or column needs this many ink pixels to count
 const MARGIN = 0.04; // breathing room, as a share of the pack's longer side
+// The tallest a pack is ever drawn is ~460 CSS px (product page), so 1000px
+// covers a 2× screen. Newer studio shots arrive at 1500px+ and 250KB.
+const MAX_SIDE = 1000;
 
 // libvips caches open files; on Windows that lock blocks writing back to
 // the same path, so the cache is off and every read goes through a buffer.
@@ -73,6 +76,7 @@ for (const file of readdirSync(DIR).filter((f) => f.endsWith(".webp"))) {
   // but any partial alpha left at the edge would otherwise show as a seam.
   const out = await sharp(input)
     .extract({ left, top, width, height })
+    .resize({ width: MAX_SIDE, height: MAX_SIDE, fit: "inside", withoutEnlargement: true })
     .flatten({ background: "#ffffff" })
     .webp({ quality: 86 })
     .toBuffer();

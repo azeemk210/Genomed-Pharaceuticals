@@ -167,6 +167,8 @@ await page.locator('button:has-text("Send enquiry")').click();
 await page.waitForTimeout(400);
 const errCount = await page.locator('[aria-invalid="true"]').count();
 if (errCount < 3) note("/contact", "form", `expected validation errors, got ${errCount}`);
+const errFocus = await page.evaluate(() => document.activeElement?.getAttribute("aria-invalid"));
+if (errFocus !== "true") note("/contact", "form", "focus did not move to the first invalid field");
 console.log(`  empty submit → ${errCount} invalid fields flagged`);
 
 // 4. search dialog: open, type, keyboard-select

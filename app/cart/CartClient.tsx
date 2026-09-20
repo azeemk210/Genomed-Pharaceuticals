@@ -301,6 +301,7 @@ export default function CartClient() {
                         name={r.product.name}
                         pack={r.product.pack}
                         photo={r.product.photo}
+                        sizes="104px"
                       />
                     </span>
                   </Link>
@@ -341,9 +342,10 @@ export default function CartClient() {
                         {isSaved(r.slug) ? (
                           "Saved"
                         ) : (
-                          <>
+                          // One flex item, or the button's gap splits the phrase.
+                          <span>
                             Save<span className="hidden sm:inline"> for later</span>
-                          </>
+                          </span>
                         )}
                       </button>
 
@@ -391,7 +393,7 @@ export default function CartClient() {
         </div>
 
         {/* ---- summary ---- */}
-        <aside className="lg:sticky lg:top-40 lg:self-start">
+        <aside className="lg:sticky lg:top-40 lg:max-h-[calc(100dvh-11rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain">
           <div className="border border-sand-200 bg-sand-50 p-6 md:p-7">
             <h2 className="text-2xl">Enquiry summary</h2>
             <dl className="mt-5 space-y-3 text-sm">

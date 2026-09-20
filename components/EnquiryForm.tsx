@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { ArrowRight } from "lucide-react";
 import { contact, formEndpoint } from "@/lib/site";
 import { therapies } from "@/lib/products";
@@ -28,6 +28,14 @@ export default function EnquiryForm({
   const [errors, setErrors] = useState<Errors>({});
   const [status, setStatus] = useState<{ tone: "ok" | "err"; msg: string } | null>(null);
   const [sending, setSending] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
+  // Counts failed submits. Focus moves in an effect, once React has rendered
+  // aria-invalid — queried straight after setErrors the attributes are not in
+  // the DOM yet, so the first failed submit focused nothing at all.
+  const [failed, setFailed] = useState(0);
+  useEffect(() => {
+    if (failed) formRef.current?.querySelector<HTMLElement>("[aria-invalid='true']")?.focus();
+  }, [failed]);
 
   const field =
     "w-full border border-sand-300 bg-sand-50 px-4 py-3 text-base text-sand-900 transition-colors placeholder:text-sand-400 focus:border-forest-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-forest-100";
@@ -57,7 +65,7 @@ export default function EnquiryForm({
     setErrors(next);
     if (Object.keys(next).length) {
       setStatus({ tone: "err", msg: "Please correct the highlighted fields and try again." });
-      form.querySelector<HTMLElement>("[aria-invalid='true']")?.focus();
+      setFailed((n) => n + 1);
       return;
     }
 
@@ -126,6 +134,7 @@ export default function EnquiryForm({
 
   return (
     <form
+      ref={formRef}
       onSubmit={onSubmit}
       noValidate
       className="border border-sand-200 bg-white p-6 shadow-raise-md md:p-9"

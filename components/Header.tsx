@@ -114,7 +114,9 @@ export default function Header() {
 
   const badge = (n: number) =>
     ready && n > 0 ? (
-      <span className="tnum absolute -top-1.5 -right-1.5 grid h-5 min-w-5 place-items-center bg-gold-500 px-1 text-[0.75rem] font-bold text-forest-990 ring-2 ring-white">
+      // Hung off the tile's top-right corner by its own size, so a wide
+      // "99+" rides above the icon instead of growing leftwards across it.
+      <span aria-hidden="true" className="tnum absolute top-0 right-0 grid translate-x-1/3 -translate-y-1/2 h-5 min-w-5 place-items-center bg-gold-500 px-1 text-[0.75rem] font-bold text-forest-990 ring-2 ring-white">
         {n > 99 ? "99+" : n}
       </span>
     ) : null;
@@ -291,14 +293,19 @@ export default function Header() {
                 the bag held. The labels appear once there is room (xl). */}
             <Link
               href="/saved"
-              aria-label={`Saved products${ready && saved.length ? ` (${saved.length})` : ""}`}
               className="group hidden items-center gap-2.5 p-0.5 sm:flex"
             >
               <span className={tile}>
                 <Heart className="h-[1.1rem] w-[1.1rem]" strokeWidth={1.8} />
                 {badge(saved.length)}
               </span>
-              <span className="hidden leading-tight xl:block" aria-hidden="true">
+              {/* The visible words are the accessible name (WCAG 2.5.3: a name
+                  that differs from what is on screen breaks voice control).
+                  Below xl they are not rendered, so an sr-only twin stands in. */}
+              <span className="sr-only xl:hidden">
+                Saved products{ready && saved.length ? ` (${saved.length})` : ""}
+              </span>
+              <span className="hidden leading-tight xl:block">
                 <span className="block text-caption text-sand-600">Saved</span>
                 <span className="tnum block text-sm font-bold text-forest-950">
                   {ready && saved.length
@@ -310,17 +317,20 @@ export default function Header() {
 
             <Link
               href="/cart"
-              aria-label={`Enquiry list${ready && count ? ` (${count} items)` : " (empty)"}`}
               className="group flex items-center gap-2.5 p-0.5"
             >
               <span className={tile}>
                 <ShoppingBag className="h-[1.1rem] w-[1.1rem]" strokeWidth={1.8} />
                 {badge(count)}
               </span>
-              <span className="hidden leading-tight xl:block" aria-hidden="true">
+              <span className="sr-only xl:hidden">
+                Enquiry list{ready && count ? ` (${count} items)` : " (empty)"}
+              </span>
+              <span className="hidden leading-tight xl:block">
                 <span className="block text-caption text-sand-600">Enquiry list</span>
                 <span className="tnum block text-sm font-bold text-forest-950">
                   {ready && count > 0 ? price(subtotal) : "Empty"}
+                  {ready && count > 0 && <span className="sr-only">, {count} items</span>}
                 </span>
               </span>
             </Link>

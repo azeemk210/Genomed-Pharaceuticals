@@ -59,9 +59,21 @@ function Line({
 
 export default function Hero() {
   return (
-    <section className="hero-aurora relative overflow-hidden border-b border-sand-200 pt-10 md:pt-14">
+    <section className="hero-aurora relative isolate overflow-hidden border-b border-sand-200 pt-10 md:pt-14">
+      {/* Background photograph at 90% (10% transparent) over the aurora ground. `isolate` on the
+          section keeps the negative z-index inside it, so the image sits above
+          the section's own background and below every piece of content. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src="/media/hero-background.webp"
+        alt=""
+        aria-hidden="true"
+        // Blurred and scaled a touch past its box, so the softened edge never
+        // shows as a pale fringe. The blur is what lifts the packs off the photo.
+        className="pointer-events-none absolute inset-0 -z-10 h-full w-full scale-105 object-cover opacity-90 blur-[5px]"
+      />
       {/* ============================= STATEMENT ============================= */}
-      <div className="shell relative flex flex-col items-center text-center">
+      <div className="hero-glow shell relative flex flex-col items-center text-center">
 
         <h1 className="max-w-4xl font-display text-5xl leading-[1.02] font-semibold tracking-[-0.025em] text-balance text-forest-950">
           <Line delay={60}>Herbal, built to</Line>
@@ -106,12 +118,21 @@ export default function Hero() {
       </div>
 
       {/* The licence is the highest-value thing on a pharmaceutical page, so it
-          stays inside the hero rather than in a separate strip further down. */}
-      <div className="shell relative mt-14 pb-14 md:mt-20 md:pb-20 xl:mt-24">
-        <ul className="grid grid-cols-1 gap-px border border-sand-200 bg-sand-200 shadow-raise-md sm:grid-cols-2 lg:grid-cols-4">
+          stays inside the hero rather than in a separate strip further down.
+          Plain white, full-bleed, no photo behind it: earlier versions tried
+          fading the hero photograph out behind this row (two gradient hacks,
+          one for this block's own width and a second for the strip beyond
+          `shell`'s 1344px cap on wide screens) — simpler and cleaner to just
+          stop the photo here outright and let the row sit on solid ground, so
+          there is nothing left to fade. `left-[calc(50%-50vw)] w-screen` is
+          the standard breakout: it escapes `shell`'s max-width so the white
+          reaches the true viewport edges instead of leaving the aurora ground
+          showing in the gutters either side. */}
+      <div className="relative left-[calc(50%-50vw)] mt-14 w-screen border-t border-sand-200 bg-sand-0 md:mt-20 xl:mt-24">
+        <ul className="shell grid grid-cols-1 gap-x-10 gap-y-8 py-10 sm:grid-cols-2 sm:gap-y-10 md:py-12 lg:grid-cols-4 lg:divide-x lg:divide-sand-200">
           {TRUST.map(({ icon: Icon, title, body }) => (
-            <li key={title} className="group flex flex-col gap-3 bg-white p-5 md:p-6">
-              <span className="grid h-10 w-10 flex-none place-items-center bg-forest-700 text-white transition-colors duration-300 group-hover:bg-gold-500 group-hover:text-forest-990">
+            <li key={title} className="group flex items-start gap-4 lg:pl-8 lg:first:pl-0">
+              <span className="grid h-11 w-11 flex-none place-items-center bg-forest-700 text-white transition-colors duration-300 group-hover:bg-gold-500 group-hover:text-forest-990">
                 <Icon className="h-5 w-5" strokeWidth={1.6} />
               </span>
               <span>

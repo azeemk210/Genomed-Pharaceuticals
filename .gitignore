@@ -44,3 +44,6 @@ next-env.d.ts
 .test-shots/
 
 .sweep-shots
+
+# Local planning docs — never committed
+/docs/

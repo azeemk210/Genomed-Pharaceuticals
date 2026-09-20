@@ -260,7 +260,10 @@ export default function ProductFilter({
         {/* Desktop filters. First in the DOM, so on wide screens a keyboard or
             screen-reader user meets the filters before the results. */}
         <aside aria-label="Filters" className="hidden lg:block">
-          <div className="sticky top-40">
+          {/* Capped to the space under the header and scrollable within it: on a
+              short laptop screen the panel is taller than the viewport, and a
+              pinned panel that overflows can never be scrolled to its end. */}
+          <div className="sticky top-40 -mr-3 max-h-[calc(100dvh-11rem)] overflow-y-auto overscroll-contain pr-3 [scrollbar-width:thin]">
             <FilterPanel id="side" {...panelProps} />
             {active.length > 0 && (
               <button

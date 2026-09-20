@@ -12,7 +12,9 @@ const fraunces = Fraunces({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-fraunces",
-  axes: ["SOFT", "WONK", "opsz"],
+  // opsz only: SOFT and WONK are never set in the CSS, and each unused axis
+  // is weight in the one font file every page preloads.
+  axes: ["opsz"],
 });
 
 /* Text face: Manrope. Geometric-humanist, excellent numerals for spec tables. */

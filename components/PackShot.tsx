@@ -1,6 +1,7 @@
 "use client";
 
 import { useId } from "react";
+import Image from "next/image";
 import type { Product } from "@/lib/products";
 
 /**
@@ -24,25 +25,35 @@ export default function PackShot({
   pack,
   photo,
   className = "",
+  sizes = "(min-width: 1024px) 25vw, (min-width: 768px) 33vw, 50vw",
+  priority = false,
 }: {
   form: Product["form"];
   name: string;
   pack?: string;
   photo?: string;
   className?: string;
+  /** Rendered width, so the browser fetches a pack sized for its slot. */
+  sizes?: string;
+  /** The page's main image: fetched eagerly, not lazily. */
+  priority?: boolean;
 }) {
   const gid = useId().replace(/:/g, "");
   const isBottle = form === "Syrup" || form === "Liquid";
 
   if (photo) {
+    // `fill` against the positioned wrapper every caller already provides.
+    // The source photos are 400–800px wide; a phone card shows them at ~150px.
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
+      <Image
         src={photo}
         alt={`${name} — ${pack ?? form} pack`}
-        loading="lazy"
-        decoding="async"
-        className={`h-full w-full object-contain ${className}`}
+        fill
+        sizes={sizes}
+        // Next 16 deprecates `priority`; its docs recommend these two instead.
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "auto"}
+        className={`object-contain ${className}`}
       />
     );
   }
