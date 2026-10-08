@@ -219,6 +219,7 @@ export default function SearchDialog({
                         alt=""
                         className="h-12 w-12 flex-none object-contain"
                         loading="lazy"
+                        decoding="async"
                       />
                     ) : (
                       <span className="grid h-12 w-12 flex-none place-items-center bg-sand-100 text-sand-600">

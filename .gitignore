@@ -47,3 +47,10 @@ next-env.d.ts
 
 # Local planning docs — never committed
 /docs/
+
+# Website context dumps
+/website-context/
+/context/
+
+# Raw media source
+public/media/hero_background.jpeg

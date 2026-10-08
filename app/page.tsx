@@ -55,6 +55,8 @@ export default function Home() {
                       src={a.image}
                       alt=""
                       fill
+                      loading="lazy"
+                      decoding="async"
                       sizes="(max-width: 1024px) 50vw, 25vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-[1.06]"
                     />

@@ -53,6 +53,7 @@ export default function PackShot({
         // Next 16 deprecates `priority`; its docs recommend these two instead.
         loading={priority ? "eager" : "lazy"}
         fetchPriority={priority ? "high" : "auto"}
+        decoding="async"
         className={`object-contain ${className}`}
       />
     );

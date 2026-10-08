@@ -38,6 +38,8 @@ export default function StatGrid() {
             alt=""
             aria-hidden="true"
             fill
+            loading="lazy"
+            decoding="async"
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
             className="pointer-events-none object-cover opacity-40 saturate-50 transition-transform duration-400 ease-out group-hover:scale-105"
           />

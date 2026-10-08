@@ -68,6 +68,8 @@ export default function Hero() {
         src="/media/hero-background.webp"
         alt=""
         aria-hidden="true"
+        fetchPriority="high"
+        decoding="async"
         // Blurred and scaled a touch past its box, so the softened edge never
         // shows as a pale fringe. The blur is what lifts the packs off the photo.
         className="pointer-events-none absolute inset-0 -z-10 h-full w-full scale-105 object-cover opacity-90 blur-[5px]"

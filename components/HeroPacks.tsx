@@ -41,12 +41,12 @@ type Pack = {
 };
 
 const LEFT: Pack[] = [
-  { slug: "sugar-ok-liquid", src: "/hero/packs/sugar-ok.webp", w: 717, h: 1000, outer: true, depth: 0.5, enter: 520, float: "-1s" },
-  { slug: "rimcuff-sf-syrup", src: "/hero/packs/rimcuff-sf.webp", w: 509, h: 690, outer: false, depth: 0.8, enter: 620, float: "-3s" },
+  { slug: "sugar-ok-liquid", src: "/hero/packs/sugar-ok.webp", w: 420, h: 586, outer: true, depth: 0.5, enter: 520, float: "-1s" },
+  { slug: "rimcuff-sf-syrup", src: "/hero/packs/rimcuff-sf.webp", w: 400, h: 542, outer: false, depth: 0.8, enter: 620, float: "-3s" },
 ];
 const RIGHT: Pack[] = [
-  { slug: "heamclear-sf-syrup", src: "/hero/packs/heamclear-sf.webp", w: 760, h: 1000, outer: false, depth: 0.8, enter: 660, float: "-4.5s" },
-  { slug: "kcr-powder", src: "/hero/packs/kcr-powder.webp", w: 484, h: 726, outer: true, depth: 0.5, enter: 560, float: "-2s", smUp: true },
+  { slug: "heamclear-sf-syrup", src: "/hero/packs/heamclear-sf.webp", w: 420, h: 553, outer: false, depth: 0.8, enter: 660, float: "-4.5s" },
+  { slug: "kcr-powder", src: "/hero/packs/kcr-powder.webp", w: 400, h: 600, outer: true, depth: 0.5, enter: 560, float: "-2s", smUp: true },
 ];
 
 function Display({ p, fromX }: { p: Pack; fromX: string }) {
@@ -83,7 +83,8 @@ function Display({ p, fromX }: { p: Pack; fromX: string }) {
             alt=""
             width={p.w}
             height={p.h}
-            priority
+            priority={!p.smUp}
+            decoding="async"
             sizes="(max-width: 1279px) 30vw, 12vw"
             className="h-full w-auto origin-bottom drop-shadow-[0_14px_16px_rgb(7_29_24/0.16)] transition-transform duration-300 ease-out group-hover:-translate-y-2 group-hover:scale-[1.03]"
           />

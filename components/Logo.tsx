@@ -14,9 +14,8 @@ export default function Logo({ className = "" }: { className?: string }) {
       alt="Genomed Pharmaceuticals"
       width={200}
       height={100}
-      // First image on every page and the home page's LCP element. `priority`
-      // is deprecated in Next 16; `preload` is its replacement.
-      preload
+      priority
+      decoding="async"
       className={`h-14 w-auto max-w-none shrink-0 md:h-16 ${className}`}
     />
   );

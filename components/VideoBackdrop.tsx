@@ -71,6 +71,8 @@ export default function VideoBackdrop({
         src={poster}
         alt=""
         aria-hidden="true"
+        loading="lazy"
+        decoding="async"
         className={`absolute inset-0 h-full w-full object-cover ${kenburns ? "kenburns" : ""}`}
       />
       {active && (
