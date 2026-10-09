@@ -23,15 +23,25 @@
 # misc
 .DS_Store
 *.pem
+*.key
+*.cert
+*.crt
 
-# debug
+# debug & server logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
-# env files (can opt-in for committing if needed)
-.env*
+# Environment & Secret files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+!.env.example
 
 # vercel
 .vercel
@@ -42,11 +52,13 @@ next-env.d.ts
 
 # test artifacts
 .test-shots/
-
 .sweep-shots
 
-# Local planning docs — never committed
+# Local planning docs & database dumps
 /docs/
+*.sql.gz
+*.bak
+*.dump
 
 # Website context dumps
 /website-context/

@@ -1,20 +1,15 @@
 "use client";
 
-import { useId } from "react";
+import { useId, useState } from "react";
 import Image from "next/image";
 import type { Product } from "@/lib/products";
 
 /**
  * Generated pack shot.
  *
- * Genomed has no photographed packs yet, and a stretched or missing image looks
- * worse than none. This draws the correct container for each dosage form.
- *
- * Colours are applied through inline `style` rather than `fill="var(--x)"` —
- * browsers do not resolve custom properties inside SVG presentation attributes.
- *
- * To use real photography later: save to /public/products/<slug>.jpg and pass
- * `photo` on the product. See README.md.
+ * Draws the correct container or photo for each dosage form.
+ * Wrapped in a relative, self-contained container with object-contain and an
+ * automatic fallback to SVG illustration if the photo fails to load.
  */
 
 const c = (token: string) => ({ fill: `var(--color-${token})` });
@@ -38,34 +33,36 @@ export default function PackShot({
   /** The page's main image: fetched eagerly, not lazily. */
   priority?: boolean;
 }) {
+  const [imgError, setImgError] = useState(false);
   const gid = useId().replace(/:/g, "");
   const isBottle = form === "Syrup" || form === "Liquid";
 
-  if (photo) {
-    // `fill` against the positioned wrapper every caller already provides.
-    // The source photos are 400–800px wide; a phone card shows them at ~150px.
+  if (photo && !imgError) {
     return (
-      <Image
-        src={photo}
-        alt={`${name} — ${pack ?? form} pack`}
-        fill
-        sizes={sizes}
-        // Next 16 deprecates `priority`; its docs recommend these two instead.
-        loading={priority ? "eager" : "lazy"}
-        fetchPriority={priority ? "high" : "auto"}
-        decoding="async"
-        className={`object-contain ${className}`}
-      />
+      <div className={`relative h-full w-full flex items-center justify-center overflow-hidden ${className}`}>
+        <Image
+          src={photo}
+          alt={`${name} — ${pack ?? form} pack`}
+          fill
+          sizes={sizes}
+          loading={priority ? "eager" : "lazy"}
+          fetchPriority={priority ? "high" : "auto"}
+          decoding="async"
+          onError={() => setImgError(true)}
+          className="object-contain"
+        />
+      </div>
     );
   }
 
   return (
-    <svg
-      viewBox="0 0 160 200"
-      role="img"
-      aria-label={`${name}, ${form.toLowerCase()} presentation`}
-      className={`h-full w-auto max-w-full drop-shadow-[0_18px_26px_rgba(4,18,15,0.24)] ${className}`}
-    >
+    <div className={`relative h-full w-full flex items-center justify-center overflow-hidden ${className}`}>
+      <svg
+        viewBox="0 0 160 200"
+        role="img"
+        aria-label={`${name}, ${form.toLowerCase()} presentation`}
+        className="h-full w-auto max-w-full drop-shadow-[0_18px_26px_rgba(4,18,15,0.24)]"
+      >
       <defs>
         <linearGradient id={gid} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" style={{ stopColor: "var(--color-forest-600)" }} />
@@ -140,5 +137,6 @@ export default function PackShot({
         </g>
       )}
     </svg>
-  );
+  </div>
+);
 }

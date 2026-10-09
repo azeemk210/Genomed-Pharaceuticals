@@ -2,21 +2,17 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { Trash2, ShoppingBag, ArrowRight, Heart, ChevronRight, X } from "lucide-react";
+import { Trash2, ShoppingBag, ArrowRight, Heart, ChevronRight, X, ShieldCheck, Truck } from "lucide-react";
 import PackShot from "@/components/PackShot";
 import ProductCard from "@/components/ProductCard";
-import EnquiryForm from "@/components/EnquiryForm";
-import Reveal from "@/components/Reveal";
-import Eyebrow from "@/components/Eyebrow";
 import { QtyStepper } from "@/components/AddToCart";
 import { useStore, type CartLine } from "@/components/StoreProvider";
-import { inr, price } from "@/lib/format";
+import { inr } from "@/lib/format";
 import { getTherapy, discountPct, products, type Product } from "@/lib/products";
 
-/**
- * Products not yet in the list, the ones from the same therapeutic areas as
- * what is listed first, then featured, then the rest — at most four.
- */
+const FREE_SHIPPING_THRESHOLD = 499;
+const STANDARD_SHIPPING_FEE = 50;
+
 function suggestions(inList: string[], areas: string[]): Product[] {
   const rank = (p: Product) => (areas.includes(p.therapy) ? 0 : p.featured ? 1 : 2);
   return products
@@ -42,13 +38,13 @@ function TitleBar({ count }: { count: number }) {
             <li className="flex items-center gap-2">
               <ChevronRight className="h-3 w-3 text-sand-400" aria-hidden="true" />
               <span aria-current="page" className="font-semibold text-forest-900">
-                Enquiry list
+                Shopping Cart
               </span>
             </li>
           </ol>
         </nav>
         <h1 className="mt-2 text-4xl">
-          Enquiry list
+          Shopping Cart
           {count > 0 && (
             <span className="tnum ml-3 align-middle font-sans text-lg font-semibold text-sand-600">
               {count} {count === 1 ? "item" : "items"}
@@ -87,37 +83,12 @@ function Suggestions({ items, title }: { items: Product[]; title: string }) {
   );
 }
 
-/**
- * Undo for removals. The live region stays mounted and only its content
- * changes, so the message is announced; it never takes focus. Dismisses itself
- * after 8s, but not while it is hovered or holds focus.
- */
 function UndoToast({
   undo,
   onUndo,
   onDismiss,
 }: {
   undo: { label: string } | null;
-  onUndo: () => void;
-  onDismiss: () => void;
-}) {
-  return (
-    <div
-      role="status"
-      aria-live="polite"
-      className="pointer-events-none fixed inset-x-0 bottom-0 z-50 flex justify-center px-4 pb-[max(1rem,env(safe-area-inset-bottom))]"
-    >
-      {undo && <ToastBody key={undo.label} label={undo.label} onUndo={onUndo} onDismiss={onDismiss} />}
-    </div>
-  );
-}
-
-function ToastBody({
-  label,
-  onUndo,
-  onDismiss,
-}: {
-  label: string;
   onUndo: () => void;
   onDismiss: () => void;
 }) {
@@ -132,15 +103,17 @@ function ToastBody({
     return () => window.clearTimeout(t);
   }, [held]);
 
+  if (!undo) return null;
+
   return (
     <div
       onMouseEnter={() => setHeld(true)}
       onMouseLeave={() => setHeld(false)}
       onFocus={() => setHeld(true)}
       onBlur={() => setHeld(false)}
-      className="sheet-up pointer-events-auto flex w-full max-w-md items-center gap-2 bg-forest-950 py-1.5 pr-1.5 pl-5 text-sm text-white shadow-raise-lg"
+      className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 pointer-events-auto flex w-full max-w-md items-center gap-2 bg-forest-950 py-2.5 pr-2 pl-5 text-sm text-white shadow-raise-lg"
     >
-      <span className="min-w-0 flex-1 truncate">{label}</span>
+      <span className="min-w-0 flex-1 truncate">{undo.label}</span>
       <button
         type="button"
         onClick={onUndo}
@@ -163,15 +136,10 @@ function ToastBody({
 export default function CartClient() {
   const { ready, cart, rows, count, subtotal, savings, remove, clear, restore, toggleSaved, isSaved } =
     useStore();
-  const [showForm, setShowForm] = useState(false);
-  const formRef = useRef<HTMLDivElement>(null);
   const emptyRef = useRef<HTMLHeadingElement>(null);
   const [undo, setUndo] = useState<{ label: string; lines: CartLine[] } | null>(null);
-  // Where focus goes once the list re-renders: a row's slug, or "" for the
-  // empty state. The control that was pressed unmounts with its row.
   const focusNext = useRef<string | null>(null);
 
-  /** Every removal goes through here, so every removal can be undone. */
   const drop = (slug: string | null, act: () => void) => {
     const at = rows.findIndex((r) => r.slug === slug);
     const neighbour = slug === null ? undefined : (rows[at + 1] ?? rows[at - 1]);
@@ -191,17 +159,6 @@ export default function CartClient() {
     else document.querySelector<HTMLElement>(`[data-row="${to}"] h3 a`)?.focus();
   }, [rows.length]);
 
-  // The form opens below the whole list, usually off screen, and the button
-  // that opened it unmounts. Bring it into view and hand it the focus.
-  useEffect(() => {
-    if (!showForm || !formRef.current) return;
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    formRef.current.focus({ preventScroll: true });
-    formRef.current.scrollIntoView({ behavior: reduced ? "auto" : "smooth", block: "start" });
-  }, [showForm]);
-
-  // Last child of both the empty and the full view, so it stays mounted across
-  // "Clear the list" and its live region still announces.
   const toast = (
     <UndoToast
       undo={undo}
@@ -216,144 +173,141 @@ export default function CartClient() {
     />
   );
 
-  // Until localStorage has been read, render a neutral shell rather than an
-  // "empty" message that would flash for anyone with a full list.
   if (!ready) {
     return (
       <>
         <TitleBar count={0} />
-        <div className="shell py-24" aria-busy="true" />
+        <div className="shell py-16 text-center text-sand-500">Loading your cart…</div>
       </>
     );
   }
 
   if (count === 0) {
+    const featured = products.filter((p) => p.featured).slice(0, 4);
     return (
       <>
         <TitleBar count={0} />
-        <section className="shell py-14 md:py-20">
-          <div className="mx-auto grid max-w-xl justify-items-center gap-5 border border-dashed border-sand-300 px-6 py-16 text-center">
-            <span className="grid h-16 w-16 place-items-center bg-sand-100 text-sand-600">
-              <ShoppingBag className="h-7 w-7" />
-            </span>
-            <h2 ref={emptyRef} tabIndex={-1} className="text-3xl outline-none">
-              Your enquiry list is empty
+        <section className="shell py-16 md:py-24 text-center">
+          <div className="mx-auto max-w-md">
+            <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-sand-100 text-forest-700">
+              <ShoppingBag className="h-8 w-8" />
+            </div>
+            <h2 ref={emptyRef} tabIndex={-1} className="mt-6 text-3xl font-display outline-none">
+              Your bag is empty
             </h2>
-            <p className="text-sand-600">
-              Add the formulations you are interested in and send them to us in one go. We
-              reply with trade pricing, minimum order quantities and availability for your
-              territory.
+            <p className="mt-3 text-sm leading-relaxed text-sand-600">
+              Explore our range of classical and proprietary Ayurvedic formulations with batch traceability.
             </p>
-            <Link
-              href="/products"
-              className="group mt-2 inline-flex items-center gap-2 bg-forest-700 px-7 py-4 text-sm font-bold text-white transition-colors hover:bg-forest-800"
-            >
-              Browse the portfolio
-              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link>
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              <Link
+                href="/products"
+                className="inline-flex min-h-12 items-center justify-center bg-forest-700 px-7 text-sm font-bold text-white transition-colors hover:bg-forest-800"
+              >
+                Browse all products
+              </Link>
+            </div>
           </div>
         </section>
-        <Suggestions items={suggestions([], [])} title="Popular formulations" />
+        <Suggestions items={featured} title="Popular formulations" />
         {toast}
       </>
     );
   }
 
-  // A plain-text summary of the list, prefilled into the enquiry message.
-  const summary =
-    rows
-      .map((r) => `${r.qty} × ${r.product.name} (${r.product.pack}) — ${inr(r.product.mrp * r.qty)}`)
-      .join("\n") + `\n\nItems: ${count}\nIndicative total at MRP: ${inr(subtotal)}`;
+  const shippingFee = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : STANDARD_SHIPPING_FEE;
+  const grandTotal = subtotal + shippingFee;
+  const remainingForFreeShipping = Math.max(0, FREE_SHIPPING_THRESHOLD - subtotal);
+  const freeShippingProgress = Math.min(100, Math.round((subtotal / FREE_SHIPPING_THRESHOLD) * 100));
 
+  const areas = Array.from(new Set(rows.map((r) => r.product.therapy)));
   const also = suggestions(
     rows.map((r) => r.slug),
-    rows.map((r) => r.product.therapy),
+    areas
   );
 
   return (
     <>
       <TitleBar count={count} />
 
-      <section className="shell grid gap-10 py-8 md:py-10 lg:grid-cols-[1fr_22rem] lg:gap-14">
-        <div>
-          {/* Between the h1 and the rows' h3s, for navigation by heading. */}
-          <h2 className="sr-only">Items in your list</h2>
-          <ul className="border-t border-sand-200">
+      <section className="shell grid gap-10 py-10 lg:grid-cols-3 lg:gap-12">
+        {/* ---- list ---- */}
+        <div className="lg:col-span-2">
+          {/* Free Shipping Progress Indicator */}
+          <div className="mb-6 border border-sand-200 bg-sand-50 p-4">
+            <div className="flex items-center justify-between text-xs font-semibold text-forest-900">
+              <span className="flex items-center gap-1.5">
+                <Truck className="h-4 w-4 text-forest-700" />
+                {remainingForFreeShipping > 0
+                  ? `Add ${inr(remainingForFreeShipping)} more for FREE Delivery across India`
+                  : "You qualify for FREE Delivery!"}
+              </span>
+              <span className="tnum text-sand-600">{freeShippingProgress}%</span>
+            </div>
+            <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-sand-200">
+              <div
+                className="h-full bg-forest-700 transition-all duration-300"
+                style={{ width: `${freeShippingProgress}%` }}
+              />
+            </div>
+          </div>
+
+          <ul className="divide-y divide-sand-200 border-y border-sand-200">
             {rows.map((r) => {
-              const therapy = getTherapy(r.product.therapy);
+              const th = getTherapy(r.product.therapy);
               const off = discountPct(r.product);
+              const saved = isSaved(r.slug);
+
               return (
                 <li
                   key={r.slug}
                   data-row={r.slug}
-                  className="grid grid-cols-[5.5rem_1fr] items-start gap-4 border-b border-sand-200 py-5 sm:grid-cols-[6.5rem_1fr_auto] sm:gap-6"
+                  className="grid grid-cols-[80px_1fr] sm:grid-cols-[100px_1fr_auto] gap-4 sm:gap-6 py-6 items-start"
                 >
-                  {/* Absolute inset, not a centred grid cell: an auto-height cell
-                      gives the image's h-full nothing definite to resolve against,
-                      so a portrait pack sizes from its width and overflows. */}
                   <Link
                     href={`/products/${r.slug}`}
-                    className="product-stage relative block aspect-square overflow-hidden border border-sand-200"
+                    aria-label={`View ${r.product.name} details`}
+                    className="product-stage relative block h-20 w-20 sm:h-[100px] sm:w-[100px] shrink-0 border border-sand-200 overflow-hidden group transition-transform duration-200 hover:scale-[1.02]"
                   >
-                    <span className="pack-blend absolute inset-[10%]">
+                    <span className="pack-blend absolute inset-2 block">
                       <PackShot
                         form={r.product.form}
                         name={r.product.name}
                         pack={r.product.pack}
                         photo={r.product.photo}
-                        sizes="104px"
+                        sizes="(min-width: 640px) 100px, 80px"
                       />
                     </span>
                   </Link>
 
                   <div className="min-w-0">
-                    <p className="text-[0.75rem] font-bold tracking-[0.14em] text-gold-700 uppercase">
-                      {therapy?.name}
+                    <p className="text-xs uppercase tracking-wider text-forest-700 font-semibold">
+                      {th?.name || r.product.form}
                     </p>
-                    <h3 className="mt-1 text-xl">
+                    <h3 className="mt-1 text-lg font-bold text-forest-950 font-display">
                       <Link href={`/products/${r.slug}`} className="hover:text-forest-700">
                         {r.product.name}
                       </Link>
                     </h3>
-                    <p className="mt-0.5 text-sm text-sand-600">
-                      {r.product.form} · {r.product.pack} · {price(r.product.mrp)} each
-                    </p>
+                    <p className="text-xs text-sand-600 mt-0.5">{r.product.pack}</p>
 
-                    <div className="mt-3 flex flex-wrap items-center gap-x-1 gap-y-1 sm:gap-x-3">
-                      {/* Same control as the cards and product page, so the
-                          three never disagree. */}
-                      <QtyStepper
-                        product={r.product}
-                        qty={r.qty}
-                        size="sm"
-                        onEmptied={() => drop(r.slug, () => {})}
-                        className="mr-[calc(100%-8rem)] w-32 shrink-0 sm:mr-0"
-                      />
+                    <div className="mt-4 flex flex-wrap items-center gap-4">
+                      <QtyStepper product={r.product} qty={r.qty} size="sm" />
 
                       <button
                         type="button"
                         onClick={() => toggleSaved(r.slug)}
-                        aria-pressed={isSaved(r.slug)}
-                        className="-ml-2 inline-flex min-h-11 items-center gap-2 px-2 text-sm font-semibold text-sand-600 hover:text-forest-700 sm:ml-0"
+                        aria-pressed={saved}
+                        className="inline-flex min-h-11 items-center gap-1.5 px-2 text-xs font-semibold text-sand-600 hover:text-forest-700"
                       >
-                        <Heart className="h-4 w-4" fill={isSaved(r.slug) ? "currentColor" : "none"} />
-                        {/* Short label below sm, so Save and Remove share one
-                            line beside an 88px thumbnail on a 320px screen. */}
-                        {isSaved(r.slug) ? (
-                          "Saved"
-                        ) : (
-                          // One flex item, or the button's gap splits the phrase.
-                          <span>
-                            Save<span className="hidden sm:inline"> for later</span>
-                          </span>
-                        )}
+                        <Heart className={`h-4 w-4 ${saved ? "fill-gold-500 text-gold-500" : ""}`} />
+                        {saved ? "Saved" : "Save for later"}
                       </button>
 
                       <button
                         type="button"
                         onClick={() => drop(r.slug, () => remove(r.slug))}
-                        aria-label={`Remove ${r.product.name} from the enquiry list`}
-                        className="inline-flex min-h-11 items-center gap-2 px-2 text-sm font-semibold text-sand-600 hover:text-red-700"
+                        aria-label={`Remove ${r.product.name} from bag`}
+                        className="inline-flex min-h-11 items-center gap-1.5 px-2 text-xs font-semibold text-sand-600 hover:text-red-700"
                       >
                         <Trash2 className="h-4 w-4" />
                         Remove
@@ -362,11 +316,11 @@ export default function CartClient() {
                   </div>
 
                   <p className="col-start-2 flex flex-col items-start sm:col-start-3 sm:items-end">
-                    <span className="tnum font-display text-2xl font-semibold text-forest-800">
+                    <span className="tnum font-display text-xl font-bold text-forest-900">
                       {inr(r.product.mrp * r.qty)}
                     </span>
                     {off > 0 && r.product.listPrice && (
-                      <s className="tnum text-sm text-sand-600">{inr(r.product.listPrice * r.qty)}</s>
+                      <s className="tnum text-xs text-sand-500">{inr(r.product.listPrice * r.qty)}</s>
                     )}
                   </p>
                 </li>
@@ -387,23 +341,29 @@ export default function CartClient() {
               className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-sand-600 hover:text-red-700"
             >
               <Trash2 className="h-4 w-4" />
-              Clear the list
+              Clear the bag
             </button>
           </div>
         </div>
 
-        {/* ---- summary ---- */}
+        {/* ---- summary & checkout CTA ---- */}
         <aside className="lg:sticky lg:top-40 lg:max-h-[calc(100dvh-11rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain">
           <div className="border border-sand-200 bg-sand-50 p-6 md:p-7">
-            <h2 className="text-2xl">Enquiry summary</h2>
+            <h2 className="text-2xl font-display text-forest-950">Order Summary</h2>
             <dl className="mt-5 space-y-3 text-sm">
               <div className="flex justify-between gap-4">
-                <dt className="text-sand-600">Items</dt>
-                <dd className="tnum font-semibold text-forest-950">{count}</dd>
+                <dt className="text-sand-600">Subtotal ({count} {count === 1 ? "item" : "items"})</dt>
+                <dd className="tnum font-semibold text-forest-950">{inr(subtotal)}</dd>
               </div>
               <div className="flex justify-between gap-4">
-                <dt className="text-sand-600">Total at MRP</dt>
-                <dd className="tnum font-semibold text-forest-950">{inr(subtotal)}</dd>
+                <dt className="text-sand-600">Delivery Fee</dt>
+                <dd className="tnum font-semibold text-forest-950">
+                  {shippingFee === 0 ? (
+                    <span className="text-green-700 font-bold uppercase text-xs tracking-wider">FREE</span>
+                  ) : (
+                    inr(shippingFee)
+                  )}
+                </dd>
               </div>
               {savings > 0 && (
                 <div className="flex justify-between gap-4">
@@ -411,59 +371,43 @@ export default function CartClient() {
                   <dd className="tnum font-semibold text-forest-700">−{inr(savings)}</dd>
                 </div>
               )}
+              <div className="flex justify-between gap-4 border-t border-sand-200 pt-3 text-base">
+                <dt className="font-bold text-forest-950">Grand Total</dt>
+                <dd className="tnum font-bold text-forest-950 text-lg">{inr(grandTotal)}</dd>
+              </div>
             </dl>
 
-            <p className="mt-5 border-t border-sand-200 pt-4 text-sm leading-relaxed text-sand-600">
-              Figures are indicative MRP, not a quotation. Trade pricing, margins and minimum
-              order quantities are confirmed in our reply.
-            </p>
+            <Link
+              href="/checkout"
+              className="group mt-6 flex w-full items-center justify-center gap-2 bg-forest-700 px-6 py-4 text-sm font-bold text-white transition-colors hover:bg-forest-800"
+            >
+              Proceed to Checkout
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </Link>
 
-            {!showForm && (
-              <button
-                type="button"
-                onClick={() => setShowForm(true)}
-                className="group mt-6 flex w-full items-center justify-center gap-2 bg-forest-700 px-6 py-4 text-sm font-bold text-white transition-colors hover:bg-forest-800"
-              >
-                Send this enquiry
-                <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </button>
-            )}
+            <div className="mt-6 space-y-2 border-t border-sand-200 pt-4 text-xs text-sand-600">
+              <div className="flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-forest-700 shrink-0" />
+                <span>GMP-compliant formulations direct from Dhakauli plant</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Truck className="h-4 w-4 text-forest-700 shrink-0" />
+                <span>Fast dispatch with Delhivery live consignment tracking</span>
+              </div>
+            </div>
+
+            <p className="mt-4 text-caption text-sand-500">
+              Hospital or wholesale distributor inquiry? Visit our{" "}
+              <Link href="/partner" className="font-semibold text-forest-700 underline underline-offset-2">
+                commercial distributor onboarding
+              </Link>
+              .
+            </p>
           </div>
         </aside>
-
-        {/* ---- order enquiry form ---- */}
-        {showForm && (
-          <div
-            ref={formRef}
-            id="send"
-            tabIndex={-1}
-            role="region"
-            aria-label="Send your enquiry"
-            className="scroll-mt-44 outline-none lg:col-span-2"
-          >
-            <div className="mb-8 max-w-2xl">
-              <Reveal>
-                <Eyebrow>Send your enquiry</Eyebrow>
-              </Reveal>
-              <Reveal delay={80}>
-                <h2 className="mt-5 text-3xl">Where should we send the quotation?</h2>
-              </Reveal>
-              <Reveal delay={140}>
-                <p className="mt-4 text-sand-600">
-                  Your list is attached to the message below. Add your territory and expected
-                  monthly volumes and we will come back within two working days.
-                </p>
-              </Reveal>
-            </div>
-            <EnquiryForm
-              subject="Bulk or institutional order"
-              prefillMessage={`Order enquiry — ${count} item${count === 1 ? "" : "s"}:\n\n${summary}`}
-            />
-          </div>
-        )}
       </section>
 
-      <Suggestions items={also} title="You may also need" />
+      <Suggestions items={also} title="Frequently paired formulations" />
       {toast}
     </>
   );

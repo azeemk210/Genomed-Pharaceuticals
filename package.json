@@ -10,18 +10,27 @@
     "og": "node scripts/make-og.mjs",
     "test:browser": "node scripts/browser-test.mjs",
     "test:ux": "node scripts/ux-audit.mjs",
-    "test:responsive": "node scripts/responsive-sweep.mjs",
+    "test:responsive": "node scripts/test-responsive-audit.mjs",
+    "test:e2e": "node scripts/e2e-live-journey.mjs",
+    "test:endpoints": "node scripts/test-all-endpoints.mjs",
     "shoot": "node scripts/shoot.mjs"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "jose": "^6.2.12",
     "lucide-react": "^1.45.0",
+    "mysql2": "^3.24.5",
     "next": "16.3.5",
+    "nodemailer": "^10.0.16",
+    "razorpay": "^2.9.8",
     "react": "19.2.8",
     "react-dom": "19.2.8"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
+    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
+    "@types/nodemailer": "^8.0.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
