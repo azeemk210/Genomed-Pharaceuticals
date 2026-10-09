@@ -27,34 +27,37 @@ export default function PrivacyPage() {
           <div>
             <h2>What this policy covers</h2>
             <p>
-              This policy applies to {site.url} and to information you send us through it. It
-              is written for a site that publishes company and product information and
-              accepts business enquiries. We do not sell online, do not take payments through
-              this site, and do not operate customer accounts.
+              This policy applies to {site.url} and to information you provide when browsing,
+              submitting distributor enquiries, or placing orders for our herbal formulations.
+              We are committed to maintaining data privacy, integrity, and security across all
+              interactions.
             </p>
           </div>
 
           <div>
             <h2>What we collect</h2>
             <p>
-              Only what you type into an enquiry form and choose to send. That is your name,
-              your firm or organisation, phone number, email address, city and territory, the
-              nature of your enquiry, any therapeutic areas you tick, and your message.
+              We collect information that you explicitly provide when contacting us or completing an order:
             </p>
-            <p>
-              We do not run advertising trackers or analytics cookies on this site. Our web
-              host keeps standard server logs — IP address, browser type, pages requested and
-              timestamps — which are used to keep the site running and secure.
+            <ul className="mt-3 space-y-2 list-disc list-inside text-sand-600">
+              <li><strong>Contact & Identity:</strong> Name, phone number, and optional email address.</li>
+              <li><strong>Delivery Information:</strong> Flat/house number, street address, locality, city, state, and 6-digit postal PIN code for order fulfilment.</li>
+              <li><strong>Verification Data:</strong> Mobile OTP verification codes used to authenticate genuine cash-on-delivery and prepaid orders.</li>
+              <li><strong>Commercial Enquiries:</strong> Firm/distributor name, expected volumes, and territory preferences.</li>
+            </ul>
+            <p className="mt-4">
+              <strong>Payment Security:</strong> Online payments are processed directly by our PCI-DSS Level 1 compliant payment gateway partner (Razorpay). Genomed does not store, process, or have access to your credit/debit card numbers, CVVs, or bank netbanking passwords.
             </p>
           </div>
 
           <div>
-            <h2>Third parties that see your data</h2>
+            <h2>Third parties that assist our operations</h2>
             <ul className="mt-4 space-y-3">
               {[
-                ["Google Fonts", "serves the typefaces used on this site. They are self-hosted at build time, so in normal use your browser does not contact Google for them."],
-                ["Google Maps", "supplies the map on the Contact page. It loads only on that page, and receives your IP address when it does."],
-                ["Our form provider and email host", "process enquiries so they reach our inbox."],
+                ["Razorpay", "processes online transactions securely via UPI, cards, and netbanking under RBI-mandated compliance."],
+                ["Delhivery Logistics", "receives your delivery address and contact phone number solely for courier consignment transit and delivery updates."],
+                ["Transactional SMS Provider", "delivers 6-digit OTP verification codes to your mobile number under TRAI DLT regulations."],
+                ["Google Maps", "supplies location context on our Contact page without collecting personal profile data."],
               ].map(([name, rest]) => (
                 <li key={name} className="grid grid-cols-[auto_1fr] gap-3 text-sand-600">
                   <span className="mt-2.5 h-1.5 w-1.5 flex-none bg-gold-500" aria-hidden="true" />
@@ -64,7 +67,7 @@ export default function PrivacyPage() {
                 </li>
               ))}
             </ul>
-            <p>We do not sell your information, and we do not pass it to anyone for marketing.</p>
+            <p className="mt-4">We strictly do not sell, rent, or trade your personal data to any external advertising or data brokerage networks.</p>
           </div>
 
           <div>

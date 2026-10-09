@@ -24,10 +24,19 @@ const SECTIONS: [string, string[]][] = [
     ],
   ],
   [
-    "Product information",
+    "Product information & Pricing",
     [
-      "We try to keep product details accurate and current, but pack sizes, compositions, presentations and prices change. The approved product literature and the pack label are the authoritative source — not this website. Maximum retail prices shown are indicative and inclusive of taxes unless stated otherwise; the price printed on the pack governs.",
-      "Listing a product here is not an offer to sell. Availability depends on territory, licensing and stock.",
+      "We strive to ensure accurate descriptions, images, and MRP listings for all formulations. Prices listed on the site are in Indian Rupees (INR) and are inclusive of Goods & Services Tax (GST).",
+      "We reserve the right to revise product specifications, packaging design, and maximum retail prices in accordance with statutory approvals. The price printed on the delivered pack label is the legally governing maximum retail price.",
+    ],
+  ],
+  [
+    "Terms of Sale & Online Orders",
+    [
+      "When placing an order on our website, you agree to provide an authentic full name, contact number, and deliverable postal address within India.",
+      "Mobile OTP verification is mandatory for confirming checkout intent. Orders placed via Cash on Delivery (COD) are accepted on the condition of authentic doorstep acceptance and payment.",
+      "Prepaid transactions are processed via our partner Razorpay under 256-bit encryption. Genomed reserves the right to cancel or withhold orders in cases of stock exhaustion, unserviceable pincodes, or suspected fraud, with immediate full refund to the customer.",
+      "All sales are subject to our published Shipping & Delivery Policy and Refund & Cancellation Policy.",
     ],
   ],
   [

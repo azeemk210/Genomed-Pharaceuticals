@@ -96,3 +96,32 @@ export function verifyRazorpaySignature({
 
   return crypto.timingSafeEqual(expectedBuf, actualBuf);
 }
+
+/**
+ * Validates incoming Razorpay Webhook signatures (X-Razorpay-Signature)
+ */
+export function verifyRazorpayWebhookSignature({
+  rawBody,
+  signature,
+  secret,
+}: {
+  rawBody: string;
+  signature: string;
+  secret: string;
+}): boolean {
+  if (!secret || !signature) return false;
+  const expectedSignature = crypto
+    .createHmac("sha256", secret)
+    .update(rawBody)
+    .digest("hex");
+
+  const expectedBuf = Buffer.from(expectedSignature, "utf8");
+  const actualBuf = Buffer.from(signature, "utf8");
+
+  if (expectedBuf.length !== actualBuf.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(expectedBuf, actualBuf);
+}
+

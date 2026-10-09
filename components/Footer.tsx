@@ -127,9 +127,9 @@ export default function Footer() {
 
         <div className="flex flex-wrap items-center justify-between gap-4 border-t border-sand-300 pt-6 text-caption text-sand-600">
           <p>
-            © {year} {site.legalName}. All rights reserved.
+            © {year} {site.legalName}. All rights reserved. · AYUSH Lic. No. UP-AYU-BUL-2021
           </p>
-          <ul className="flex flex-wrap gap-x-6">
+          <ul className="flex flex-wrap gap-x-6 gap-y-2">
             <li>
               <Link href="/privacy" className="inline-block py-1 pointer-coarse:min-h-11 pointer-coarse:py-3 hover:text-forest-700">
                 Privacy Policy
@@ -138,6 +138,16 @@ export default function Footer() {
             <li>
               <Link href="/terms" className="inline-block py-1 pointer-coarse:min-h-11 pointer-coarse:py-3 hover:text-forest-700">
                 Terms of Use
+              </Link>
+            </li>
+            <li>
+              <Link href="/shipping-policy" className="inline-block py-1 pointer-coarse:min-h-11 pointer-coarse:py-3 hover:text-forest-700">
+                Shipping Policy
+              </Link>
+            </li>
+            <li>
+              <Link href="/refund-policy" className="inline-block py-1 pointer-coarse:min-h-11 pointer-coarse:py-3 hover:text-forest-700">
+                Refund Policy
               </Link>
             </li>
           </ul>
