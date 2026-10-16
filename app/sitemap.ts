@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ["/about", 0.8, "yearly"],
     ["/partner", 0.8, "yearly"],
     ["/contact", 0.7, "yearly"],
+    ["/track", 0.5, "monthly"],
     ["/shipping-policy", 0.3, "yearly"],
     ["/refund-policy", 0.3, "yearly"],
     ["/privacy", 0.2, "yearly"],

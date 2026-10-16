@@ -45,6 +45,7 @@ export default function Footer() {
                 ["Quality & Manufacturing", "/quality"],
                 ["Partner With Us", "/partner"],
                 ["Contact", "/contact"],
+                ["Track Order", "/track"],
                 ["Enquiry list", "/cart"],
                 ["Saved products", "/saved"],
               ].map(([label, href]) => (

@@ -4,6 +4,7 @@ import Header from "@/components/Header";
 import { StoreProvider } from "@/components/StoreProvider";
 import Footer from "@/components/Footer";
 import { site, contact } from "@/lib/site";
+import WhatsAppButton from "@/components/WhatsAppButton";
 import "./globals.css";
 
 /* Display face: Fraunces. High-contrast, optically sized, with just enough
@@ -95,6 +96,7 @@ export default function RootLayout({
           <Header />
           <main id="main">{children}</main>
           <Footer />
+          <WhatsAppButton />
         </StoreProvider>
       </body>
     </html>
