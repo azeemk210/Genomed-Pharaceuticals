@@ -10,6 +10,7 @@ import {
   getCustomersList,
   generateCourierCsv,
 } from "../lib/orders.ts";
+import { createRazorpayOrder, verifyRazorpaySignature } from "../lib/razorpay.ts";
 import { authenticateAdmin, createAdminToken, verifyAdminToken } from "../lib/admin-auth.ts";
 
 async function runTests() {
@@ -37,9 +38,9 @@ async function runTests() {
   if (!isValidToken) throw new Error("Phone token validation failed");
   console.log("✓ Phone OTP verification passed.");
 
-  // 3. Order Placement (COD)
-  console.log("\n3. Testing COD Order Placement:");
-  const codOrder = await createOrder({
+  // 3. 100% Prepaid Razorpay Order Placement
+  console.log("\n3. Testing Prepaid Razorpay Order Creation & Verification:");
+  const prepaidOrder = await createOrder({
     customer: {
       name: "Test Customer",
       phone: "9876543210",
@@ -55,19 +56,43 @@ async function runTests() {
       { slug: "decoliv-ds-syrup", qty: 2 },
       { slug: "rimcuff-sf-syrup", qty: 1 },
     ],
-    paymentMethod: "cod",
+    paymentMethod: "razorpay",
   });
-  console.log(`- Created order #${codOrder.order_number}, Status: ${codOrder.status}, Total: ₹${codOrder.total}`);
-  if (codOrder.status !== "confirmed" || codOrder.payment_method !== "cod") {
-    throw new Error("COD Order status mismatch");
+  console.log(`- Created order #${prepaidOrder.order_number}, Status: ${prepaidOrder.status}, Payment Method: ${prepaidOrder.payment_method}, Total: ₹${prepaidOrder.total}`);
+  if (prepaidOrder.payment_method !== "razorpay") {
+    throw new Error("Order payment_method must be razorpay");
   }
+
+  // Create Razorpay payment intent
+  const razorpayOrder = await createRazorpayOrder({
+    amountInRupees: prepaidOrder.total,
+    receipt: prepaidOrder.order_number,
+    notes: { order_number: prepaidOrder.order_number },
+  });
+  console.log(`- Created Razorpay Order ID: ${razorpayOrder.id}, Amount: ${razorpayOrder.amount} paise`);
+
+  // Simulate successful payment verification
+  const isSigValid = verifyRazorpaySignature({
+    orderId: razorpayOrder.id,
+    paymentId: "pay_test_123456",
+    signature: "dummy_signature_token",
+  });
+  if (!isSigValid) throw new Error("Razorpay signature validation failed");
+
+  const paidOrder = await updateOrder(prepaidOrder.order_number, {
+    payment_status: "paid",
+    status: "confirmed",
+    razorpay_order_id: razorpayOrder.id,
+    razorpay_payment_id: "pay_test_123456",
+  });
+  console.log(`✓ Order #${paidOrder?.order_number} verified as PAID: ${paidOrder?.payment_status}`);
 
   // 4. Order Query & AWB Assignment
   console.log("\n4. Testing Order Lookup & Delhivery Fulfillment:");
-  const fetchedOrder = await getOrderByNumber(codOrder.order_number);
+  const fetchedOrder = await getOrderByNumber(prepaidOrder.order_number);
   if (!fetchedOrder) throw new Error("Failed to retrieve created order");
 
-  const updatedOrder = await updateOrder(codOrder.order_number, {
+  const updatedOrder = await updateOrder(prepaidOrder.order_number, {
     status: "dispatched",
     delhivery_awb: "DEL1234567890",
   });

@@ -47,8 +47,8 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Your shopping bag is empty." }, { status: 400 });
     }
 
-    // 5. Validate Payment Method
-    const method = paymentMethod === "cod" ? "cod" : "razorpay";
+    // 5. Payment Method: 100% Prepaid via Razorpay
+    const method = "razorpay" as const;
 
     // 6. Create Order in Database
     const order = await createOrder({
@@ -71,23 +71,21 @@ export async function POST(req: Request) {
       paymentMethod: method,
     });
 
-    // 7. If Razorpay, initiate payment order
-    let razorpayOrder = null;
-    if (method === "razorpay") {
-      razorpayOrder = await createRazorpayOrder({
-        amountInRupees: order.total,
-        receipt: order.order_number,
-        notes: {
-          customer_phone: order.customer.phone,
-          customer_name: order.customer.name,
-        },
-      });
+    // 7. Initiate Razorpay payment order
+    const razorpayOrder = await createRazorpayOrder({
+      amountInRupees: order.total,
+      receipt: order.order_number,
+      notes: {
+        customer_phone: order.customer.phone,
+        customer_name: order.customer.name,
+        order_number: order.order_number,
+      },
+    });
 
-      // Save razorpay_order_id
-      await updateOrder(order.order_number, {
-        razorpay_order_id: razorpayOrder.id,
-      });
-    }
+    // Save razorpay_order_id
+    await updateOrder(order.order_number, {
+      razorpay_order_id: razorpayOrder.id,
+    });
 
     return NextResponse.json({
       success: true,

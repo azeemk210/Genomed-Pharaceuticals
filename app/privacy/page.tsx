@@ -42,7 +42,7 @@ export default function PrivacyPage() {
             <ul className="mt-3 space-y-2 list-disc list-inside text-sand-600">
               <li><strong>Contact & Identity:</strong> Name, phone number, and optional email address.</li>
               <li><strong>Delivery Information:</strong> Flat/house number, street address, locality, city, state, and 6-digit postal PIN code for order fulfilment.</li>
-              <li><strong>Verification Data:</strong> Mobile OTP verification codes used to authenticate genuine cash-on-delivery and prepaid orders.</li>
+              <li><strong>Verification Data:</strong> Mobile OTP verification codes used to authenticate genuine customer contact details and secure checkout verification.</li>
               <li><strong>Commercial Enquiries:</strong> Firm/distributor name, expected volumes, and territory preferences.</li>
             </ul>
             <p className="mt-4">

@@ -236,7 +236,7 @@ export default async function OrderDetailsPage({
                 <div>
                   <span className="text-sand-600">Method: </span>
                   <strong className="text-forest-950">
-                    {order.payment_method === "cod" ? "Cash on Delivery" : "Online Prepaid (Razorpay)"}
+                    Online Prepaid (Razorpay)
                   </strong>
                 </div>
                 <div>
@@ -248,13 +248,14 @@ export default async function OrderDetailsPage({
                         : "bg-amber-100 text-amber-800"
                     }`}
                   >
-                    {order.payment_status === "paid" ? "Paid" : "Due on Delivery"}
+                    {order.payment_status === "paid" ? "Paid" : "Awaiting Confirmation"}
                   </span>
                 </div>
-                {order.payment_method === "cod" && order.payment_status === "unpaid" && (
-                  <p className="mt-2 text-caption text-sand-600 leading-snug">
-                    Please keep <strong>{inr(order.total)}</strong> ready in cash for the delivery courier.
-                  </p>
+                {order.razorpay_payment_id && (
+                  <div>
+                    <span className="text-sand-600">Payment Ref: </span>
+                    <span className="font-mono text-forest-950">{order.razorpay_payment_id}</span>
+                  </div>
                 )}
               </div>
             </div>

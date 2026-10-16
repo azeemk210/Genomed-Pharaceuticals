@@ -12,7 +12,6 @@ import {
   AlertCircle,
   ShoppingBag,
   CreditCard,
-  Banknote,
   Loader2,
 } from "lucide-react";
 import PackShot from "@/components/PackShot";
@@ -101,21 +100,35 @@ export default function CheckoutClient() {
   const [state, setState] = useState("Uttar Pradesh");
   const [pincode, setPincode] = useState("");
 
-  // Payment Method State
-  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "cod">("razorpay");
+  // Payment Method: 100% Prepaid via Razorpay
+  const paymentMethod = "razorpay" as const;
 
   // Submission State
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Load Razorpay checkout.js script
-  useEffect(() => {
-    if (typeof window !== "undefined" && !window.Razorpay) {
+  // Robust loader for Razorpay checkout.js script
+  const loadRazorpay = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      if (typeof window === "undefined") return resolve(false);
+      if (window.Razorpay) return resolve(true);
+      const existing = document.querySelector('script[src*="checkout.razorpay.com"]');
+      if (existing) {
+        existing.addEventListener("load", () => resolve(true));
+        existing.addEventListener("error", () => resolve(false));
+        return;
+      }
       const script = document.createElement("script");
       script.src = "https://checkout.razorpay.com/v1/checkout.js";
       script.async = true;
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
       document.body.appendChild(script);
-    }
+    });
+  };
+
+  useEffect(() => {
+    loadRazorpay();
   }, []);
 
   const handleSendOtp = async () => {
@@ -247,74 +260,69 @@ export default function CheckoutClient() {
       if (!res.ok) throw new Error(data.error || "Failed to initialize order.");
 
       const orderNumber = data.orderNumber;
+      const razorpayOrder = data.razorpayOrder;
 
-      // 2. Handle Cash On Delivery
-      if (paymentMethod === "cod") {
-        clear();
-        router.push(`/order/${orderNumber}`);
-        return;
+      if (!razorpayOrder) {
+        throw new Error("Unable to create payment order. Please contact support.");
       }
 
-      // 3. Handle Razorpay Prepaid Checkout
-      if (paymentMethod === "razorpay") {
-        const razorpayOrder = data.razorpayOrder;
-
-        if (!window.Razorpay) {
-          throw new Error("Razorpay payment gateway is loading. Please try again in a few seconds.");
-        }
-
-        const options = {
-          key: razorpayOrder.keyId,
-          amount: razorpayOrder.amount,
-          currency: razorpayOrder.currency,
-          name: "Genomed Pharmaceuticals",
-          description: `Order #${orderNumber}`,
-          order_id: razorpayOrder.id,
-          prefill: {
-            name: name.trim(),
-            contact: phone,
-            email: email.trim(),
-          },
-          theme: {
-            color: "#162a22",
-          },
-          handler: async function (response: RazorpaySuccessResponse) {
-            try {
-              const verifyRes = await fetch("/api/payments/razorpay/verify", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  orderNumber,
-                  razorpay_order_id: response.razorpay_order_id,
-                  razorpay_payment_id: response.razorpay_payment_id,
-                  razorpay_signature: response.razorpay_signature,
-                }),
-              });
-              const verifyData = await verifyRes.json();
-              if (!verifyRes.ok) throw new Error(verifyData.error || "Payment verification failed");
-
-              clear();
-              router.push(`/order/${orderNumber}`);
-            } catch (err: unknown) {
-              const msg = err instanceof Error ? err.message : "Payment verification issue";
-              setErrorMessage("Payment received, but verification pending: " + msg);
-              clear();
-              router.push(`/order/${orderNumber}`);
-            }
-          },
-          modal: {
-            ondismiss: function () {
-              setIsSubmitting(false);
-              setErrorMessage("Payment process was cancelled. You can retry when ready.");
-            },
-          },
-        };
-
-        if (window.Razorpay) {
-          const rzp = new window.Razorpay(options);
-          rzp.open();
+      // Ensure Razorpay SDK is ready
+      if (!window.Razorpay) {
+        const loaded = await loadRazorpay();
+        if (!loaded || !window.Razorpay) {
+          throw new Error("Payment gateway is taking too long to load. Please check your internet connection and retry.");
         }
       }
+
+      const options = {
+        key: razorpayOrder.keyId,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: "Genomed Pharmaceuticals",
+        description: `Order #${orderNumber}`,
+        order_id: razorpayOrder.id,
+        prefill: {
+          name: name.trim(),
+          contact: phone,
+          email: email.trim(),
+        },
+        theme: {
+          color: "#162a22",
+        },
+        handler: async function (response: RazorpaySuccessResponse) {
+          try {
+            const verifyRes = await fetch("/api/payments/razorpay/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                orderNumber,
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+              }),
+            });
+            const verifyData = await verifyRes.json();
+            if (!verifyRes.ok) throw new Error(verifyData.error || "Payment verification failed");
+
+            clear();
+            router.push(`/order/${orderNumber}`);
+          } catch (err: unknown) {
+            const msg = err instanceof Error ? err.message : "Payment verification issue";
+            setErrorMessage("Payment received, but verification pending: " + msg);
+            clear();
+            router.push(`/order/${orderNumber}`);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            setIsSubmitting(false);
+            setErrorMessage("Payment was not completed. You can retry when ready.");
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "An unexpected error occurred during checkout.";
       setErrorMessage(msg);
@@ -603,79 +611,56 @@ export default function CheckoutClient() {
               </div>
             </section>
 
-            {/* STEP 3: PAYMENT METHOD */}
+            {/* STEP 3: PREPAID PAYMENT METHOD */}
             <section className="border border-sand-200 bg-white p-4 sm:p-6 md:p-8">
               <div className="border-b border-sand-200 pb-4">
                 <h2 className="text-lg sm:text-xl font-display font-semibold text-forest-950 flex items-center gap-2">
                   <span className="grid h-6 w-6 place-items-center rounded-full bg-forest-900 text-xs text-white shrink-0">
                     3
                   </span>
-                  Payment Method
+                  Payment (100% Prepaid via Razorpay)
                 </h2>
               </div>
 
-              <div className="mt-6 space-y-4">
-                {/* Razorpay Option */}
-                <label
-                  className={`flex cursor-pointer items-start gap-4 border p-4 transition-colors ${
-                    paymentMethod === "razorpay"
-                      ? "border-forest-700 bg-forest-50/20 ring-1 ring-forest-700"
-                      : "border-sand-200 hover:border-sand-300"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="razorpay"
-                    checked={paymentMethod === "razorpay"}
-                    onChange={() => setPaymentMethod("razorpay")}
-                    className="mt-1 text-forest-700 focus:ring-forest-700"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-forest-950 text-sm flex items-center gap-2">
-                        <CreditCard className="h-4 w-4 text-forest-700" />
+              <div className="mt-6 border border-forest-600/30 bg-forest-50/20 p-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="grid h-10 w-10 place-items-center rounded-full bg-forest-900 text-white shrink-0">
+                      <CreditCard className="h-5 w-5 text-gold-400" />
+                    </div>
+                    <div>
+                      <span className="font-bold text-forest-950 text-sm block">
                         Online Payment (UPI, Cards, Netbanking)
                       </span>
-                      <span className="text-caption font-bold text-green-700 uppercase bg-green-50 px-2 py-0.5 border border-green-200">
-                        Fastest Dispatch
+                      <span className="text-xs text-forest-700 font-medium">
+                        Instant, 256-Bit SSL Encrypted via Razorpay
                       </span>
                     </div>
-                    <p className="mt-1 text-xs text-sand-600 leading-relaxed">
-                      Instant and secure checkout via Razorpay. Supports Google Pay, PhonePe, Paytm, RuPay, Visa,
-                      Mastercard and Netbanking.
-                    </p>
                   </div>
-                </label>
+                  <span className="text-caption font-bold text-green-800 uppercase bg-green-100/90 px-2.5 py-1 border border-green-300 shrink-0">
+                    Fastest Dispatch
+                  </span>
+                </div>
 
-                {/* Cash on Delivery Option */}
-                <label
-                  className={`flex cursor-pointer items-start gap-4 border p-4 transition-colors ${
-                    paymentMethod === "cod"
-                      ? "border-forest-700 bg-forest-50/20 ring-1 ring-forest-700"
-                      : "border-sand-200 hover:border-sand-300"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="cod"
-                    checked={paymentMethod === "cod"}
-                    onChange={() => setPaymentMethod("cod")}
-                    className="mt-1 text-forest-700 focus:ring-forest-700"
-                  />
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-forest-950 text-sm flex items-center gap-2">
-                        <Banknote className="h-4 w-4 text-forest-700" />
-                        Cash on Delivery (COD)
-                      </span>
-                    </div>
-                    <p className="mt-1 text-xs text-sand-600 leading-relaxed">
-                      Pay cash to the Delhivery courier executive upon safe package delivery at your doorstep.
-                    </p>
+                <div className="mt-4 pt-4 border-t border-forest-200/50 space-y-2 text-xs text-sand-700">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-forest-700 shrink-0" />
+                    <span><strong>Instant UPI:</strong> Google Pay, PhonePe, Paytm, BHIM & all UPI apps</span>
                   </div>
-                </label>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-forest-700 shrink-0" />
+                    <span><strong>Cards:</strong> RuPay, Visa, MasterCard (Debit & Credit cards)</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <CheckCircle2 className="h-4 w-4 text-forest-700 shrink-0" />
+                    <span><strong>Netbanking:</strong> All major Indian banks with instant verification</span>
+                  </div>
+                </div>
+
+                <div className="mt-4 pt-3 border-t border-forest-200/40 text-caption text-sand-600 flex items-center gap-1.5">
+                  <Lock className="h-3.5 w-3.5 text-forest-700 shrink-0" />
+                  <span>Prepaid orders are prioritized and dispatched within 24–48 hours direct from our Dhakauli plant.</span>
+                </div>
               </div>
             </section>
           </div>
@@ -752,13 +737,11 @@ export default function CheckoutClient() {
                 {isSubmitting ? (
                   <span className="flex items-center gap-2">
                     <Loader2 className="h-4 w-4 animate-spin" />
-                    Processing Order…
+                    Opening Payment Gateway…
                   </span>
                 ) : (
                   <>
-                    <span>
-                      {paymentMethod === "razorpay" ? `Pay ${inr(grandTotal)} with Razorpay` : `Confirm COD Order (${inr(grandTotal)})`}
-                    </span>
+                    <span>Pay {inr(grandTotal)} with Razorpay</span>
                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                   </>
                 )}

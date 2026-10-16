@@ -61,8 +61,7 @@ const SECTIONS: [string, string[]][] = [
     "Refund Method & Timelines",
     [
       "Approved refunds are processed promptly to the original mode of payment:",
-      "• Online Payments (UPI, Netbanking, Debit/Credit Cards via Razorpay): The refund will reflect in your bank account or source wallet within 5 to 7 business days, depending on your bank's clearing cycle.",
-      "• Cash on Delivery (COD) Orders: Refunds will be remitted directly to your bank account via IMPS/NEFT transfer or UPI upon receipt of your verified account details.",
+      "• All online orders are prepaid via Razorpay: Approved refunds are credited directly back to the original source account (UPI, Debit/Credit Card, or Netbanking bank account) within 5 to 7 business days, depending on your card issuer or bank's settlement cycle.",
       "Delivery fees (if applicable) are fully refunded if the return is due to transit damage, defect, or an error on our part.",
     ],
   ],

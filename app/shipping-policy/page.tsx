@@ -55,11 +55,11 @@ const SECTIONS: [string, string[]][] = [
     ],
   ],
   [
-    "Cash on Delivery (COD) Guidelines",
+    "Prepaid Order Fulfillment Policy",
     [
-      "Cash on Delivery is available for serviceable pincodes across India.",
-      "Please ensure that exact cash is ready upon arrival of the delivery executive. Delhivery delivery agents also accept digital UPI payments at doorstep for your convenience.",
-      "Repeated refusal of verified COD shipments may result in restriction of COD payment eligibility for future orders.",
+      "To ensure contactless, tamper-evident, and prioritized courier handling, all orders placed on our website must be prepaid via Razorpay (UPI, Debit/Credit Cards, or Netbanking).",
+      "We do not offer Cash on Delivery (COD). Prepaid orders are prioritized for immediate packaging and handed over to Delhivery within 24 to 48 hours.",
+      "Transactions are protected by 256-bit encryption, and zero surcharge is levied on digital payment methods.",
     ],
   ],
   [

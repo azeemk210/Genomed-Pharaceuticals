@@ -34,7 +34,7 @@ const SECTIONS: [string, string[]][] = [
     "Terms of Sale & Online Orders",
     [
       "When placing an order on our website, you agree to provide an authentic full name, contact number, and deliverable postal address within India.",
-      "Mobile OTP verification is mandatory for confirming checkout intent. Orders placed via Cash on Delivery (COD) are accepted on the condition of authentic doorstep acceptance and payment.",
+      "Mobile OTP verification is mandatory for confirming checkout intent. All orders placed on our website must be 100% prepaid via our authorized payment aggregator (Razorpay) prior to shipment.",
       "Prepaid transactions are processed via our partner Razorpay under 256-bit encryption. Genomed reserves the right to cancel or withhold orders in cases of stock exhaustion, unserviceable pincodes, or suspected fraud, with immediate full refund to the customer.",
       "All sales are subject to our published Shipping & Delivery Policy and Refund & Cancellation Policy.",
     ],

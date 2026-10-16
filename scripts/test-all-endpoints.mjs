@@ -109,7 +109,7 @@ async function testSuite() {
     const unauthRes = await checkoutRoute(unauthReq);
     assert(unauthRes.status === 401, "Blocks checkout without verified phoneToken (401 Unauthorized)");
 
-    // B: Valid COD checkout
+    // B: Valid 100% Prepaid Razorpay checkout
     const validCheckoutReq = new Request("http://localhost/api/checkout", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -130,14 +130,14 @@ async function testSuite() {
           { slug: "decoliv-ds-syrup", qty: 2 },
           { slug: "sugar-ok-liquid", qty: 1 },
         ],
-        paymentMethod: "cod",
+        paymentMethod: "razorpay",
       }),
     });
     const validCheckoutRes = await checkoutRoute(validCheckoutReq);
     const validCheckoutData = await validCheckoutRes.json();
     assert(
-      validCheckoutRes.status === 200 && !!validCheckoutData.orderNumber,
-      `Creates order #${validCheckoutData.orderNumber} with server-calculated pricing`
+      validCheckoutRes.status === 200 && !!validCheckoutData.orderNumber && !!validCheckoutData.razorpayOrder,
+      `Creates prepaid order #${validCheckoutData.orderNumber} with Razorpay intent and server pricing`
     );
     createdOrderNumber = validCheckoutData.orderNumber;
 
@@ -150,7 +150,7 @@ async function testSuite() {
         customer: { name: "Replay Attempt", phone: testPhone },
         address: { line1: "Street", city: "City", state: "State", pincode: "203001" },
         items: [{ slug: "decoliv-ds-syrup", qty: 1 }],
-        paymentMethod: "cod",
+        paymentMethod: "razorpay",
       }),
     });
     const replayRes = await checkoutRoute(replayReq);
