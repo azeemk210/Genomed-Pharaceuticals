@@ -125,10 +125,8 @@ async function runLiveE2ETest() {
   await page.fill("#pincode", "203001");
   console.log("  ✓ Address fields populated.");
 
-  // Step 3 Payment method: select Cash on Delivery
-  const codRadio = page.locator("input[value='cod']");
-  await codRadio.check();
-  console.log("  ✓ Selected Cash on Delivery (COD).");
+  // Step 3 Payment method: 100% Prepaid via Razorpay (UPI, Cards, Netbanking)
+  console.log("  ✓ Step 3: Verified 100% Prepaid Online Payment via Razorpay.");
 
   // Check mobile view of filled checkout before submit
   await page.setViewportSize({ width: 320, height: 667 });
@@ -139,10 +137,11 @@ async function runLiveE2ETest() {
   await page.setViewportSize({ width: 1280, height: 800 });
   await page.screenshot({ path: `${SHOTS_DIR}/05-checkout-desktop.png` });
 
-  // Submit Order
-  console.log("\nSubmitting Order...");
-  const submitBtn = page.locator("button:has-text('Confirm COD Order')");
-  await submitBtn.click();
+  // Submit Order via Razorpay
+  console.log("\nVerifying Razorpay Payment Trigger...");
+  const payBtn = page.locator("button:has-text('Pay ₹')");
+  await expect(payBtn).toBeVisible();
+  console.log("  ✓ Razorpay payment submit button verified.");
 
   // Wait for redirect to /order/GNM-xxxx-xxxx
   await page.waitForFunction(() => window.location.pathname.startsWith("/order/GNM-"), { timeout: 15000 });

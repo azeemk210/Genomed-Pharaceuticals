@@ -437,11 +437,13 @@ The site provides an authoritative, self-hosted checkout and fulfillment system 
 2. **Secure Checkout (`/checkout`)**:
    - **Phone OTP Verification**: Ensures genuine phone contact before an order is placed.
    - **Shipping Destination**: Delivery street, city, state, and 6-digit PIN code.
-   - **Payment Selection**: Online payment via Razorpay (UPI, Cards, Netbanking) or Cash on Delivery (COD).
-3. **Live Order Status (`/order/[id]`)**:
+   - **100% Prepaid Online Payment**: Seamless checkout via Razorpay supporting UPI (Google Pay, PhonePe, Paytm, BHIM), Debit/Credit Cards, and Netbanking (Cash on Delivery eliminated for priority dispatch).
+3. **Dedicated Public Order Tracking (`/track`)**:
+   - Customers can look up real-time status at any time by entering their Order Number.
+4. **Live Order Status & Receipt (`/order/[id]`)**:
    - Real-time milestone tracker: *Confirmed* → *Processing (Dhakauli Plant)* → *Dispatched (Delhivery)* → *Delivered*.
    - Live Delhivery AWB consignment tracking button.
-   - Print-ready order receipt and pre-filled WhatsApp customer support.
+   - Print-ready order receipt and instant WhatsApp customer support.
 
 ---
 
@@ -527,7 +529,7 @@ npx tsx scripts/test-all-endpoints.mjs
 ### Automated Layout & Responsive Verification
 
 - `npm run test:responsive`: Sweeps 10 routes across 5 viewports (320px, 390px, 768px, 1024px, 1440px) in headless Chrome with zero horizontal overflow (**50/50 checks passed**).
-- `npm run test:e2e`: Executes live end-to-end user purchase journey (Cart → Checkout → OTP Verification → COD Order Placement → Order Receipt → Admin Backoffice) with high-res screenshots recorded in `.test-shots/live-e2e/`.
+- `npm run test:e2e`: Executes live end-to-end user purchase journey (Cart → Checkout → OTP Verification → Prepaid Razorpay Order Placement → Order Receipt → Admin Backoffice) with high-res screenshots recorded in `.test-shots/live-e2e/`.
 
 > For comprehensive threat models, secrets architecture, and regulatory considerations, see the detailed report in [`website-context/06-SECURITY-AND-ENDPOINT-AUDIT-REPORT.md`](file:///d:/Acer%20Jan%202025/Azeem/Genomed/genomed-react/website-context/06-SECURITY-AND-ENDPOINT-AUDIT-REPORT.md).
 

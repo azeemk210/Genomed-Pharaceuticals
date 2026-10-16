@@ -11,7 +11,7 @@ To connect the live Genomed website (`genomedpharmaceuticals.com`) to the Indian
 | Service | Provider | Purpose | Time Required |
 |---|---|---|---|
 | **1. Online Payments** | **Razorpay** | UPI (GPay, PhonePe, Paytm), Netbanking & Debit/Credit Cards | 1–2 Business Days |
-| **2. Customer OTP SMS** | **Fast2SMS / MSG91** | Verify mobile numbers before cash on delivery / orders | 1 Business Day |
+| **2. Customer OTP SMS** | **Fast2SMS / MSG91** | Verify mobile numbers before prepaid checkout to eliminate bot spam | 1 Business Day |
 | **3. Courier & Logistics** | **Delhivery One** | Doorstep parcel pickup from Dhakauli & live tracking across India | 1 Business Day |
 | **4. Cloud Server & DB** | **Hostinger / DigitalOcean VPS** | High-speed server and MySQL database to store orders safely | 30 Minutes |
 
@@ -60,7 +60,7 @@ Prepare scanned PDF or clear JPEG copies of the following:
 
 ## Part 2: SMS Verification Gateway — Fast2SMS (or MSG91)
 
-To protect Genomed against fake Cash on Delivery orders, the website sends a 6-digit one-time password (OTP) to the customer’s phone before checkout is permitted.
+To protect Genomed against spam, fraudulent checkout attempts, and incorrect delivery details, the website sends a 6-digit one-time password (OTP) to the customer’s phone before checkout is permitted.
 
 Under Telecom Regulatory Authority of India (TRAI) regulations, commercial transactional SMS requires DLT (Distributed Ledger Technology) registration.
 
