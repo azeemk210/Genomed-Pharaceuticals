@@ -54,15 +54,10 @@ next-env.d.ts
 .test-shots/
 .sweep-shots
 
-# Local planning docs & database dumps
-/docs/
+# Database dumps
 *.sql.gz
 *.bak
 *.dump
-
-# Website context dumps
-/website-context/
-/context/
 
 # Raw media source
 public/media/hero_background.jpeg
