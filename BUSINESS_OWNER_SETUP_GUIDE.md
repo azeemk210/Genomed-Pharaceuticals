@@ -93,13 +93,13 @@ Fast2SMS offers instant signup and quick transactional Quick-SMS routes with zer
 
 ## Part 3: Courier & Parcel Delivery — Delhivery One
 
-Delhivery is India's leading surface express courier network with specialized liquid/bottle handling and automated Cash on Delivery (COD) bank remittance.
+Delhivery is India's leading surface express courier network with specialized liquid/bottle handling and automated parcel tracking across India. Since Genomed operates on a **100% Prepaid model**, all shipments are booked as prepaid, saving 1.5% to 2% COD collection charges and eliminating transit refusal risks.
 
 ### Documents Required
 1. Company GSTIN & PAN.
 2. Pickup Warehouse Address: **Genomed Pharmaceuticals, Village Dhakauli, Bulandshahr, Uttar Pradesh - 203001**.
 3. Contact Person Name & Mobile Number for daily courier pickup executive coordination.
-4. Bank details for **COD Remittance** (where Delhivery deposits cash collected from customers at their doorsteps).
+4. Company Bank details (for verification and corporate billing).
 
 ### Step-by-Step Setup Process
 1. **Sign Up on Delhivery One:**
@@ -110,14 +110,13 @@ Delhivery is India's leading surface express courier network with specialized li
    - Set Name: `Dhakauli Plant Warehouse`.
    - Address: `Badda Madrsha, Post Malaghar, Village Dhakauli, Bulandshahr, Uttar Pradesh, 203001`.
    - Enter local warehouse manager contact number.
-3. **Configure Bank Account for COD Remittances:**
-   - Go to **Settings** → **Bank Accounts & Payouts**.
-   - Enter your company bank account details and upload cancelled cheque.
-   - Delhivery will remit COD collections directly to this account every Tuesday and Friday.
+3. **Prepaid Express Shipping Wallet:**
+   - Go to **Billing** → **Recharge Wallet** (start with ₹1,000–₹2,000 for initial parcel shipments).
+   - Shipping rates typically range between ₹40–₹70 per 500g bottle across India.
 4. **Obtain API Token (Optional for Automated Waybill Generation):**
    - Go to **Settings** → **API Services** → **API Keys**.
    - Click **Generate Token**.
-   *(Note: You can also use Delhivery One by simply uploading the CSV of daily orders exported from your Genomed Admin dashboard with a single click).*
+   *(Note: You can easily dispatch orders by simply uploading the daily orders CSV exported from your Genomed Admin dashboard with a single click).*
 
 ### Information to Hand Over to Developer
 - [ ] Registered Pickup Pincode (`203001`)
